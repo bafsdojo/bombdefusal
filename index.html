@@ -1,0 +1,3842 @@
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<meta name=Generator content="Microsoft Word 15 (filtered)">
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:PMingLiU;
+	panose-1:2 2 5 0 0 0 0 0 0 0;}
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Aptos;
+	panose-1:2 11 0 4 2 2 2 2 2 4;}
+@font-face
+	{font-family:"Apple Color Emoji";
+	panose-1:0 0 0 0 0 0 0 0 0 0;}
+@font-face
+	{font-family:"\@PMingLiU";
+	panose-1:2 1 6 1 0 1 1 1 1 1;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:8.0pt;
+	margin-left:0in;
+	line-height:115%;
+	font-size:12.0pt;
+	font-family:"Aptos",sans-serif;}
+.MsoChpDefault
+	{font-family:"Aptos",sans-serif;}
+.MsoPapDefault
+	{margin-bottom:8.0pt;
+	line-height:115%;}
+@page WordSection1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.0in 1.0in 1.0in;}
+div.WordSection1
+	{page:WordSection1;}
+-->
+</style>
+
+</head>
+
+<body lang=EN-US style='word-wrap:break-word'>
+
+<div class=WordSection1>
+
+<p class=MsoNormal>&lt;!DOCTYPE html&gt;</p>
+
+<p class=MsoNormal>&lt;html lang=&quot;en&quot; class=&quot;dark&quot;&gt;</p>
+
+<p class=MsoNormal>&lt;head&gt;</p>
+
+<p class=MsoNormal>    &lt;meta charset=&quot;UTF-8&quot;&gt;</p>
+
+<p class=MsoNormal>    &lt;meta name=&quot;viewport&quot;
+content=&quot;width=device-width, initial-scale=1.0&quot;&gt;</p>
+
+<p class=MsoNormal>    &lt;title&gt;BAFS DOJO - Bomb Defusal Accounting
+Game&lt;/title&gt;</p>
+
+<p class=MsoNormal>    </p>
+
+<p class=MsoNormal>    &lt;!-- Tailwind CSS CDN --&gt;</p>
+
+<p class=MsoNormal>    &lt;script
+src=&quot;https://cdn.tailwindcss.com&quot;&gt;&lt;/script&gt;</p>
+
+<p class=MsoNormal>    &lt;!-- FontAwesome Icons --&gt;</p>
+
+<p class=MsoNormal>    &lt;link rel=&quot;stylesheet&quot;
+href=&quot;https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css&quot;&gt;</p>
+
+<p class=MsoNormal>    &lt;!-- Google Fonts --&gt;</p>
+
+<p class=MsoNormal>    &lt;link rel=&quot;preconnect&quot;
+href=&quot;https://fonts.googleapis.com&quot;&gt;</p>
+
+<p class=MsoNormal>    &lt;link rel=&quot;preconnect&quot;
+href=&quot;https://fonts.gstatic.com&quot; crossorigin&gt;</p>
+
+<p class=MsoNormal>    &lt;link
+href=&quot;https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&amp;family=Share+Tech+Mono&amp;family=VT323&amp;display=swap&quot;
+rel=&quot;stylesheet&quot;&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>    &lt;script&gt;</p>
+
+<p class=MsoNormal>        tailwind.config = {</p>
+
+<p class=MsoNormal>            darkMode: 'class',</p>
+
+<p class=MsoNormal>            theme: {</p>
+
+<p class=MsoNormal>                extend: {</p>
+
+<p class=MsoNormal>                    fontFamily: {</p>
+
+<p class=MsoNormal>                        digital: ['VT323', 'monospace'],</p>
+
+<p class=MsoNormal>                        tech: ['Chakra Petch',
+'sans-serif'],</p>
+
+<p class=MsoNormal>                        'mono-tech': ['Share Tech Mono',
+'monospace']</p>
+
+<p class=MsoNormal>                    },</p>
+
+<p class=MsoNormal>                    colors: {</p>
+
+<p class=MsoNormal>                        bomb: {</p>
+
+<p class=MsoNormal>                            base: '#0f172a',</p>
+
+<p class=MsoNormal>                            panel: '#1e293b',</p>
+
+<p class=MsoNormal>                            gold: '#f59e0b',</p>
+
+<p class=MsoNormal>                            wireBlue: '#2563eb',</p>
+
+<p class=MsoNormal>                            wireRed: '#dc2626'</p>
+
+<p class=MsoNormal>                        }</p>
+
+<p class=MsoNormal>                    }</p>
+
+<p class=MsoNormal>                }</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>    &lt;/script&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>    &lt;style&gt;</p>
+
+<p class=MsoNormal>        body {</p>
+
+<p class=MsoNormal>            background-color: #020617;</p>
+
+<p class=MsoNormal>            color: #f8fafc;</p>
+
+<p class=MsoNormal>            font-family: 'Chakra Petch', sans-serif;</p>
+
+<p class=MsoNormal>            user-select: none;</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        /* Screen Glow &amp; Metal Textures */</p>
+
+<p class=MsoNormal>        .metal-panel {</p>
+
+<p class=MsoNormal>            background: linear-gradient(145deg, #1e293b,
+#0f172a);</p>
+
+<p class=MsoNormal>            box-shadow: inset 0 1px 1px rgba(255, 255, 255,
+0.1), 0 20px 25px -5px rgba(0, 0, 0, 0.7);</p>
+
+<p class=MsoNormal>            border: 1px solid #334155;</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        .screen-glow {</p>
+
+<p class=MsoNormal>            box-shadow: inset 0 0 15px rgba(6, 182, 212,
+0.15), 0 0 10px rgba(6, 182, 212, 0.1);</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        .circuit-bg {</p>
+
+<p class=MsoNormal>            background-color: #051329;</p>
+
+<p class=MsoNormal>            background-image: </p>
+
+<p class=MsoNormal>                radial-gradient(#1e3a8a 0.75px, transparent
+0.75px), </p>
+
+<p class=MsoNormal>                radial-gradient(#1e3a8a 0.75px, #051329
+0.75px);</p>
+
+<p class=MsoNormal>            background-size: 30px 30px;</p>
+
+<p class=MsoNormal>            background-position: 0 0, 15px 15px;</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        .lever-track {</p>
+
+<p class=MsoNormal>            background: linear-gradient(180deg, #020617 0%,
+#1e293b 50%, #020617 100%);</p>
+
+<p class=MsoNormal>            box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        .lever-handle {</p>
+
+<p class=MsoNormal>            transition: transform 0.2s cubic-bezier(0.34,
+1.56, 0.64, 1);</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        .lever-knob {</p>
+
+<p class=MsoNormal>            background: radial-gradient(circle at 30% 30%,
+#ef4444, #991b1b);</p>
+
+<p class=MsoNormal>            box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 0
+2px 4px rgba(255,255,255,0.4);</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        .led-pulse {</p>
+
+<p class=MsoNormal>            animation: pulse-glow 1.5s infinite alternate;</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>        @keyframes pulse-glow {</p>
+
+<p class=MsoNormal>            0% { opacity: 0.4; box-shadow: 0 0 2px #ef4444;
+}</p>
+
+<p class=MsoNormal>            100% { opacity: 1; box-shadow: 0 0 12px #ef4444,
+0 0 20px #ef4444; }</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        .terminal-btn {</p>
+
+<p class=MsoNormal>            transition: all 0.15s ease;</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>        .terminal-btn:active {</p>
+
+<p class=MsoNormal>            transform: scale(0.95);</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>        .terminal-btn.selected {</p>
+
+<p class=MsoNormal>            box-shadow: 0 0 12px #3b82f6, inset 0 0 8px
+#3b82f6;</p>
+
+<p class=MsoNormal>            border-color: #60a5fa;</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        #wireCanvas, #wireCanvas4 {</p>
+
+<p class=MsoNormal>            pointer-events: none;</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        .shake {</p>
+
+<p class=MsoNormal>            animation: shake 0.5s
+cubic-bezier(.36,.07,.19,.97) both;</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>        @keyframes shake {</p>
+
+<p class=MsoNormal>            10%, 90% { transform: translate3d(-2px, 0, 0); }</p>
+
+<p class=MsoNormal>            20%, 80% { transform: translate3d(4px, 0, 0); }</p>
+
+<p class=MsoNormal>            30%, 50%, 70% { transform: translate3d(-6px, 0,
+0); }</p>
+
+<p class=MsoNormal>            40%, 60% { transform: translate3d(6px, 0, 0); }</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        ::-webkit-scrollbar { width: 6px; }</p>
+
+<p class=MsoNormal>        ::-webkit-scrollbar-track { background: #111827; }</p>
+
+<p class=MsoNormal>        ::-webkit-scrollbar-thumb { background: #374151;
+border-radius: 3px; }</p>
+
+<p class=MsoNormal>    &lt;/style&gt;</p>
+
+<p class=MsoNormal>&lt;/head&gt;</p>
+
+<p class=MsoNormal>&lt;body class=&quot;min-h-screen flex flex-col
+justify-between items-center p-2 sm:p-4 bg-slate-950&quot;&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>    &lt;!-- TOP HEADER --&gt;</p>
+
+<p class=MsoNormal>    &lt;header class=&quot;w-full max-w-5xl flex flex-wrap
+justify-between items-center bg-slate-900 border border-slate-800 rounded-xl
+px-4 py-3 mb-3 shadow-lg&quot;&gt;</p>
+
+<p class=MsoNormal>        &lt;div class=&quot;flex items-center
+space-x-3&quot;&gt;</p>
+
+<p class=MsoNormal>            &lt;div class=&quot;p-2 bg-red-600/20 border
+border-red-500/40 rounded-lg text-red-500 cursor-pointer&quot;
+onclick=&quot;switchStage(-1)&quot; title=&quot;Intro / Instructions&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;i class=&quot;fa-solid fa-bomb text-2xl
+animate-bounce&quot;&gt;&lt;/i&gt;</p>
+
+<p class=MsoNormal>            &lt;/div&gt;</p>
+
+<p class=MsoNormal>            &lt;div&gt;</p>
+
+<p class=MsoNormal>                &lt;h1 class=&quot;text-xl sm:text-2xl
+font-black tracking-wider text-slate-100 font-digital flex items-center
+gap-2&quot;&gt;</p>
+
+<p class=MsoNormal>                    BAFS DOJO &lt;span class=&quot;text-xs
+font-semibold px-2 py-0.5 bg-red-950 border border-red-700 text-red-400
+rounded&quot;&gt;DEFUSAL v3.0&lt;/span&gt;</p>
+
+<p class=MsoNormal>                &lt;/h1&gt;</p>
+
+<p class=MsoNormal>                &lt;p class=&quot;text-xs text-slate-400
+font-mono-tech&quot;&gt;Cash Book Adjustments &amp; Bank Reconciliation
+Module&lt;/p&gt;</p>
+
+<p class=MsoNormal>            &lt;/div&gt;</p>
+
+<p class=MsoNormal>        &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        &lt;!-- STAGE SELECTOR TABS &amp; EXIT BUTTON --&gt;</p>
+
+<p class=MsoNormal>        &lt;div class=&quot;flex items-center gap-1 sm:gap-2
+mt-2 sm:mt-0 bg-slate-950 p-1.5 rounded-lg border border-slate-800
+flex-wrap&quot;&gt;</p>
+
+<p class=MsoNormal>            &lt;button id=&quot;navStageIntro&quot;
+onclick=&quot;switchStage(-1)&quot; class=&quot;px-2.5 py-1.5 text-xs
+sm:text-sm font-semibold rounded-md transition-all flex items-center gap-1.5
+bg-emerald-600 text-white shadow&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;i class=&quot;fa-solid
+fa-house&quot;&gt;&lt;/i&gt; Start</p>
+
+<p class=MsoNormal>            &lt;/button&gt;</p>
+
+<p class=MsoNormal>            &lt;button id=&quot;navStage0&quot;
+onclick=&quot;switchStage(0)&quot; class=&quot;px-2.5 py-1.5 text-xs sm:text-sm
+font-semibold rounded-md transition-all flex items-center gap-1.5
+text-slate-400 hover:text-white hover:bg-slate-800&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;i class=&quot;fa-solid
+fa-scissors&quot;&gt;&lt;/i&gt; Stage 0</p>
+
+<p class=MsoNormal>            &lt;/button&gt;</p>
+
+<p class=MsoNormal>            &lt;button id=&quot;navStage1&quot;
+onclick=&quot;switchStage(1)&quot; class=&quot;px-2.5 py-1.5 text-xs sm:text-sm
+font-semibold rounded-md transition-all flex items-center gap-1.5
+text-slate-400 hover:text-white hover:bg-slate-800&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;i class=&quot;fa-solid
+fa-scale-balanced&quot;&gt;&lt;/i&gt; Stage 1</p>
+
+<p class=MsoNormal>            &lt;/button&gt;</p>
+
+<p class=MsoNormal>            &lt;button id=&quot;navStage2&quot;
+onclick=&quot;switchStage(2)&quot; class=&quot;px-2.5 py-1.5 text-xs sm:text-sm
+font-semibold rounded-md transition-all flex items-center gap-1.5
+text-slate-400 hover:text-white hover:bg-slate-800&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;i class=&quot;fa-solid
+fa-triangle-exclamation&quot;&gt;&lt;/i&gt; Stage 2</p>
+
+<p class=MsoNormal>            &lt;/button&gt;</p>
+
+<p class=MsoNormal>            &lt;button id=&quot;navStage3&quot;
+onclick=&quot;switchStage(3)&quot; class=&quot;px-2.5 py-1.5 text-xs sm:text-sm
+font-semibold rounded-md transition-all flex items-center gap-1.5
+text-slate-400 hover:text-white hover:bg-slate-800&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;i class=&quot;fa-solid
+fa-network-wired&quot;&gt;&lt;/i&gt; Stage 3</p>
+
+<p class=MsoNormal>            &lt;/button&gt;</p>
+
+<p class=MsoNormal>            &lt;button id=&quot;navStage4&quot;
+onclick=&quot;switchStage(4)&quot; class=&quot;px-2.5 py-1.5 text-xs sm:text-sm
+font-semibold rounded-md transition-all flex items-center gap-1.5
+text-slate-400 hover:text-white hover:bg-slate-800&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;i class=&quot;fa-solid
+fa-file-invoice-dollar&quot;&gt;&lt;/i&gt; Stage 4</p>
+
+<p class=MsoNormal>            &lt;/button&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            &lt;!-- GREEN EXIT SIGN BUTTON FOR RESULTS
+--&gt;</p>
+
+<p class=MsoNormal>            &lt;button
+onclick=&quot;openResultsModal()&quot; class=&quot;ml-2 px-2.5 py-1
+bg-emerald-700 hover:bg-emerald-600 border border-emerald-400 text-white
+rounded-md transition-all flex items-center gap-1.5 shadow-md font-mono-tech
+text-xs&quot; title=&quot;Exit / View Results&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;!-- SVG Emergency Exit Icon --&gt;</p>
+
+<p class=MsoNormal>                &lt;svg class=&quot;w-5 h-5 fill-current
+text-white&quot; viewBox=&quot;0 0 24 24&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;path d=&quot;M19 3H5c-1.1 0-2 .9-2
+2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v3l-5-4
+5-4v3h4v2z&quot;/&gt;</p>
+
+<p class=MsoNormal>                &lt;/svg&gt;</p>
+
+<p class=MsoNormal>                &lt;span&gt;EXIT&lt;/span&gt;</p>
+
+<p class=MsoNormal>            &lt;/button&gt;</p>
+
+<p class=MsoNormal>        &lt;/div&gt;</p>
+
+<p class=MsoNormal>    &lt;/header&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>    &lt;!-- BOMB CONSOLE CONTAINER --&gt;</p>
+
+<p class=MsoNormal>    &lt;main id=&quot;bombConsole&quot; class=&quot;w-full
+max-w-5xl metal-panel rounded-2xl p-3 sm:p-6 relative overflow-hidden flex
+flex-col gap-6&quot;&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        &lt;!-- TOP STATUS DISPLAY: STAGE INDICATOR &amp;
+DIGITAL TICKING TIMER --&gt;</p>
+
+<p class=MsoNormal>        &lt;div class=&quot;grid grid-cols-1 md:grid-cols-12
+gap-4 items-center bg-slate-950/80 p-4 rounded-xl border border-slate-800
+bezel&quot;&gt;</p>
+
+<p class=MsoNormal>            </p>
+
+<p class=MsoNormal>            &lt;!-- LED Lights &amp; Stage Progress --&gt;</p>
+
+<p class=MsoNormal>            &lt;div class=&quot;md:col-span-4 flex
+items-center space-x-4&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;flex flex-col
+items-center&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;span class=&quot;text-[10px]
+font-mono-tech text-slate-400 uppercase tracking-widest
+mb-1&quot;&gt;ARMED&lt;/span&gt;</p>
+
+<p class=MsoNormal>                    &lt;div id=&quot;statusLed&quot;
+class=&quot;w-5 h-5 rounded-full bg-red-600 led-pulse&quot;&gt;&lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;flex-1&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;div class=&quot;flex justify-between
+text-xs font-mono-tech mb-1&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;span
+class=&quot;text-slate-400&quot; id=&quot;stageTitleProgress&quot;&gt;STAGE 0
+PROGRESS&lt;/span&gt;</p>
+
+<p class=MsoNormal>                        &lt;span id=&quot;progressText&quot;
+class=&quot;text-amber-400 font-bold&quot;&gt;0 / 22 WIRES&lt;/span&gt;</p>
+
+<p class=MsoNormal>                    &lt;/div&gt;</p>
+
+<p class=MsoNormal>                    &lt;div class=&quot;w-full bg-slate-800
+rounded-full h-3 p-0.5 border border-slate-700&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;div id=&quot;progressBar&quot;
+class=&quot;bg-gradient-to-r from-amber-500 to-emerald-500 h-full rounded-full
+transition-all duration-300&quot; style=&quot;width: 0%&quot;&gt;&lt;/div&gt;</p>
+
+<p class=MsoNormal>                    &lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>            &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            &lt;!-- Digital Countdown Screen (15:00 Defusal
+Timer) --&gt;</p>
+
+<p class=MsoNormal>            &lt;div class=&quot;md:col-span-5 flex
+justify-center&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;bg-black border-2
+border-slate-800 rounded-lg px-6 py-2 shadow-inner text-center flex flex-col
+items-center min-w-[200px]&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;span class=&quot;text-[10px]
+font-mono-tech text-red-500/80 tracking-widest uppercase&quot;&gt;DETONATION
+COUNTDOWN&lt;/span&gt;</p>
+
+<p class=MsoNormal>                    &lt;div id=&quot;timerDisplay&quot;
+class=&quot;text-4xl sm:text-5xl font-digital text-red-500 tracking-wider
+font-extrabold drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]&quot;&gt;</p>
+
+<p class=MsoNormal>                        15:00.00</p>
+
+<p class=MsoNormal>                    &lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>            &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            &lt;!-- Score &amp; Controls --&gt;</p>
+
+<p class=MsoNormal>            &lt;div class=&quot;md:col-span-3 flex
+justify-between md:justify-end items-center gap-3&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;text-right&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;div class=&quot;text-[10px]
+font-mono-tech text-slate-400&quot;&gt;DEFUSE SCORE&lt;/div&gt;</p>
+
+<p class=MsoNormal>                    &lt;div id=&quot;scoreDisplay&quot;
+class=&quot;text-xl font-digital text-emerald-400
+font-bold&quot;&gt;0000&lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;button
+onclick=&quot;toggleAudioMute()&quot; id=&quot;muteBtn&quot; class=&quot;p-2.5
+bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border
+border-slate-700 transition&quot; title=&quot;Toggle Sound&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;i class=&quot;fa-solid
+fa-volume-high&quot; id=&quot;muteIcon&quot;&gt;&lt;/i&gt;</p>
+
+<p class=MsoNormal>                &lt;/button&gt;</p>
+
+<p class=MsoNormal>                &lt;button onclick=&quot;restartGame()&quot;
+class=&quot;p-2.5 bg-red-950 hover:bg-red-900 border border-red-700
+text-red-200 rounded-lg transition font-mono-tech text-xs flex items-center
+gap-1&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;i class=&quot;fa-solid
+fa-rotate-right&quot;&gt;&lt;/i&gt; RESET</p>
+
+<p class=MsoNormal>                &lt;/button&gt;</p>
+
+<p class=MsoNormal>            &lt;/div&gt;</p>
+
+<p class=MsoNormal>        &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        &lt;!-- MAIN INTERACTIVE STAGE AREA --&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        &lt;!-- ================= STAGE -1: INTRODUCTION
+&amp; BOMB LANDING PAGE ================= --&gt;</p>
+
+<p class=MsoNormal>        &lt;div id=&quot;stageIntroView&quot;
+class=&quot;space-y-6&quot;&gt;</p>
+
+<p class=MsoNormal>            &lt;div class=&quot;bg-slate-900/90 border-2
+border-red-500/50 rounded-2xl p-6 text-center shadow-2xl relative
+overflow-hidden&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;absolute top-0 left-0
+w-full h-1 bg-gradient-to-r from-red-600 via-amber-500
+to-red-600&quot;&gt;&lt;/div&gt;</p>
+
+<p class=MsoNormal>                </p>
+
+<p class=MsoNormal>                &lt;!-- Animated Big Bomb Artwork --&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;flex justify-center
+my-4&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;div class=&quot;relative w-40 h-40
+flex items-center justify-center&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;absolute -top-6
+right-6 w-12 h-12&quot;&gt;</p>
+
+<p class=MsoNormal>                            &lt;div class=&quot;w-1.5 h-10
+bg-amber-700 rounded-full mx-auto transform -rotate-12&quot;&gt;&lt;/div&gt;</p>
+
+<p class=MsoNormal>                            &lt;div class=&quot;w-4 h-4
+bg-yellow-400 rounded-full animate-ping absolute -top-1 left-3
+opacity-75&quot;&gt;&lt;/div&gt;</p>
+
+<p class=MsoNormal>                            &lt;div class=&quot;w-3 h-3
+bg-red-500 rounded-full absolute -top-0.5 left-3.5&quot;&gt;&lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;w-32 h-32
+bg-gradient-to-br from-slate-800 via-slate-950 to-black rounded-full border-4
+border-slate-700 shadow-[0_0_30px_rgba(239,68,68,0.3)] flex items-center
+justify-center relative&quot;&gt;</p>
+
+<p class=MsoNormal>                            &lt;i class=&quot;fa-solid
+fa-bomb text-6xl text-red-500
+drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]&quot;&gt;&lt;/i&gt;</p>
+
+<p class=MsoNormal>                            &lt;div class=&quot;absolute
+bottom-4 font-digital text-red-500 text-xs font-bold
+animate-pulse&quot;&gt;15:00&lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;/div&gt;</p>
+
+<p class=MsoNormal>                    &lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                &lt;h2 class=&quot;text-2xl sm:text-3xl
+font-black font-digital text-red-500 tracking-wide mb-2&quot;&gt;</p>
+
+<p class=MsoNormal>                    WELCOME TO BAFS DOJO BOMB DEFUSAL</p>
+
+<p class=MsoNormal>                &lt;/h2&gt;</p>
+
+<p class=MsoNormal>                &lt;p class=&quot;text-slate-300
+font-mono-tech text-sm max-w-2xl mx-auto mb-6&quot;&gt;</p>
+
+<p class=MsoNormal>                    A high-stakes accounting simulator
+designed for HKDSE BAFS Cash Book adjustments and Bank Reconciliation Statement
+practice. Defuse the bomb before the 15-minute detonation timer reaches zero!</p>
+
+<p class=MsoNormal>                &lt;/p&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                &lt;!-- Mission Rules Summary --&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;grid grid-cols-1
+sm:grid-cols-2 md:grid-cols-3 gap-3 text-left max-w-3xl mx-auto mb-6
+font-mono-tech text-xs&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;div class=&quot;bg-slate-950 p-3
+rounded-xl border border-cyan-900/60&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;text-cyan-400
+font-bold mb-1&quot;&gt;&lt;i class=&quot;fa-solid
+fa-scissors&quot;&gt;&lt;/i&gt; Stage 0: Wire Cutting&lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;p
+class=&quot;text-slate-400&quot;&gt;Determine whether adjustments belong in the
+&lt;strong class=&quot;text-blue-400&quot;&gt;Cash Book (CB)&lt;/strong&gt; or
+&lt;strong class=&quot;text-red-400&quot;&gt;Bank Rec Statement (BRS)&lt;/strong&gt;.&lt;/p&gt;</p>
+
+<p class=MsoNormal>                    &lt;/div&gt;</p>
+
+<p class=MsoNormal>                    &lt;div class=&quot;bg-slate-950 p-3
+rounded-xl border border-emerald-900/60&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;text-emerald-400
+font-bold mb-1&quot;&gt;&lt;i class=&quot;fa-solid
+fa-scale-balanced&quot;&gt;&lt;/i&gt; Stage 1: CB Lever&lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;p
+class=&quot;text-slate-400&quot;&gt;Move the red-knob lever to &lt;strong
+class=&quot;text-blue-400&quot;&gt;Left (Dr.)&lt;/strong&gt; or &lt;strong
+class=&quot;text-red-400&quot;&gt;Right (Cr.)&lt;/strong&gt; for cash book items.&lt;/p&gt;</p>
+
+<p class=MsoNormal>                    &lt;/div&gt;</p>
+
+<p class=MsoNormal>                    &lt;div class=&quot;bg-slate-950 p-3
+rounded-xl border border-amber-900/60&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;text-amber-400
+font-bold mb-1&quot;&gt;&lt;i class=&quot;fa-solid
+fa-triangle-exclamation&quot;&gt;&lt;/i&gt; Stage 2: CB Errors&lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;p
+class=&quot;text-slate-400&quot;&gt;Correct cash book errors using &lt;strong
+class=&quot;text-emerald-400&quot;&gt;1x press&lt;/strong&gt; or wrong-side
+reversals with &lt;strong class=&quot;text-purple-400&quot;&gt;2x press&lt;/strong&gt;.&lt;/p&gt;</p>
+
+<p class=MsoNormal>                    &lt;/div&gt;</p>
+
+<p class=MsoNormal>                    &lt;div class=&quot;bg-slate-950 p-3
+rounded-xl border border-blue-900/60 sm:col-span-2 md:col-span-1&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;text-blue-400
+font-bold mb-1&quot;&gt;&lt;i class=&quot;fa-solid
+fa-network-wired&quot;&gt;&lt;/i&gt; Stages 3 &amp; 4: Wire
+Circuits&lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;p
+class=&quot;text-slate-400&quot;&gt;Route terminals between CB and BS:
+&lt;strong class=&quot;text-emerald-400&quot;&gt;1-6-7&lt;/strong&gt; for CB
+&amp;gt; BS or &lt;strong class=&quot;text-amber-400&quot;&gt;3-4-9&lt;/strong&gt;
+for CB &amp;lt; BS.&lt;/p&gt;</p>
+
+<p class=MsoNormal>                    &lt;/div&gt;</p>
+
+<p class=MsoNormal>                    &lt;div class=&quot;bg-slate-950 p-3
+rounded-xl border border-red-900/60 sm:col-span-2 md:col-span-2 flex
+items-center justify-between&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;div&gt;</p>
+
+<p class=MsoNormal>                            &lt;div class=&quot;text-red-400
+font-bold&quot;&gt;&lt;i class=&quot;fa-solid fa-clock&quot;&gt;&lt;/i&gt;
+15-Minute Defusal Clock&lt;/div&gt;</p>
+
+<p class=MsoNormal>                            &lt;p
+class=&quot;text-slate-400&quot;&gt;Wrong answers incur a 10-second penalty!
+Click the GREEN EXIT sign anytime to review errors.&lt;/p&gt;</p>
+
+<p class=MsoNormal>                        &lt;/div&gt;</p>
+
+<p class=MsoNormal>                    &lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                &lt;button
+onclick=&quot;startMission()&quot; class=&quot;px-8 py-4 bg-gradient-to-r
+from-red-600 via-amber-600 to-red-600 hover:from-red-500 hover:to-red-500
+text-white font-digital font-extrabold text-lg rounded-xl shadow-xl transform active:scale-95
+transition-all animate-pulse&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;i class=&quot;fa-solid fa-play
+mr-2&quot;&gt;&lt;/i&gt; START DEFUSAL MISSION</p>
+
+<p class=MsoNormal>                &lt;/button&gt;</p>
+
+<p class=MsoNormal>            &lt;/div&gt;</p>
+
+<p class=MsoNormal>        &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        &lt;!-- ================= STAGE 0: BOMB WIRE CUTTING
+(CB vs BRS) ================= --&gt;</p>
+
+<p class=MsoNormal>        &lt;div id=&quot;stage0View&quot; class=&quot;hidden
+space-y-6&quot;&gt;</p>
+
+<p class=MsoNormal>            &lt;div class=&quot;bg-slate-900/90 border-2
+border-cyan-500/40 rounded-xl p-4 sm:p-6 text-center shadow-lg relative
+screen-glow&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;absolute top-2 left-3
+text-[10px] font-mono-tech text-cyan-400/80&quot;&gt;STAGE 0 TERMINAL // BOMB
+WIRE CUTTER (CB vs BRS)&lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;!-- Dedicated Stage Instruction Banner
+--&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;mt-3 mb-3 p-3
+bg-cyan-950/60 border border-cyan-800/80 rounded-lg text-xs font-mono-tech
+text-cyan-200 text-left&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;strong class=&quot;text-cyan-400
+block mb-0.5&quot;&gt;&lt;i class=&quot;fa-solid fa-circle-info
+mr-1&quot;&gt;&lt;/i&gt; Stage 0 Instruction:&lt;/strong&gt;</p>
+
+<p class=MsoNormal>                    When cash book is updated, determine
+whether adjustments should be made in Cash Book (CB) or Bank Reconciliation
+Statement (BRS).</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;text-xs text-slate-400
+uppercase tracking-widest mb-1&quot;&gt;Item to be adjusted&lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;div id=&quot;s0QuestionText&quot;
+class=&quot;text-lg sm:text-xl font-bold text-cyan-300 min-h-[65px] flex
+items-center justify-center font-mono-tech py-2 px-4 bg-black/40 rounded-lg
+border border-cyan-950&quot;&gt;</p>
+
+<p class=MsoNormal>                    Loading Stage 0 Wire Task...</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;mt-2 text-xs
+text-slate-400 font-mono-tech&quot;&gt;</p>
+
+<p class=MsoNormal>                    Action Required: Snipe the correct wire!
+&lt;span class=&quot;text-blue-400 font-bold&quot;&gt;BLUE WIRE
+(CB)&lt;/span&gt; vs &lt;span class=&quot;text-red-400 font-bold&quot;&gt;RED
+WIRE (BRS)&lt;/span&gt;</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>            &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            &lt;!-- Wire Cutting Harness Area --&gt;</p>
+
+<p class=MsoNormal>            &lt;div class=&quot;bg-slate-900 border
+border-slate-800 rounded-2xl p-6 sm:p-8 flex flex-col items-center
+justify-center relative shadow-inner&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;w-full max-w-xl grid
+grid-cols-1 sm:grid-cols-2 gap-8 items-center py-4&quot;&gt;</p>
+
+<p class=MsoNormal>                    </p>
+
+<p class=MsoNormal>                    &lt;!-- Blue Wire (CB Adjustment) --&gt;</p>
+
+<p class=MsoNormal>                    &lt;button
+onclick=&quot;snipWire('CB')&quot; class=&quot;group relative bg-slate-950
+hover:bg-blue-950/40 border-2 border-slate-800 hover:border-blue-500/80
+rounded-2xl p-6 flex flex-col items-center transition transform active:scale-95
+shadow-2xl overflow-hidden&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;absolute
+inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500
+opacity-0 group-hover:opacity-100 transition&quot;&gt;&lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;w-full h-12 flex
+items-center justify-between mb-4 px-2 relative&quot;&gt;</p>
+
+<p class=MsoNormal>                            &lt;div class=&quot;w-6 h-8
+bg-gradient-to-b from-slate-400 via-slate-200 to-slate-600 rounded-sm border
+border-slate-700 shadow-md flex items-center justify-center z-10&quot;&gt;</p>
+
+<p class=MsoNormal>                                &lt;div class=&quot;w-2 h-4
+bg-slate-800 rounded-full&quot;&gt;&lt;/div&gt;</p>
+
+<p class=MsoNormal>                            &lt;/div&gt;</p>
+
+<p class=MsoNormal>                            &lt;div class=&quot;flex-1 h-6
+mx-[-4px] bg-gradient-to-b from-blue-400 via-blue-600 to-blue-950 rounded-full
+shadow-[0_5px_15px_rgba(37,99,235,0.5)] border-y border-blue-300 relative flex
+items-center overflow-hidden&quot;&gt;</p>
+
+<p class=MsoNormal>                                &lt;div class=&quot;w-full
+h-1 bg-white/40 absolute top-1&quot;&gt;&lt;/div&gt;</p>
+
+<p class=MsoNormal>                                &lt;div class=&quot;w-full
+h-full opacity-20
+bg-[repeating-linear-gradient(45deg,#fff,#fff_8px,transparent_8px,transparent_16px)]&quot;&gt;&lt;/div&gt;</p>
+
+<p class=MsoNormal>                                &lt;span
+class=&quot;absolute left-1/2 -translate-x-1/2 text-[10px] font-digital
+text-cyan-200 font-bold tracking-widest drop-shadow&quot;&gt;CB-WIRE //
+01&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;/div&gt;</p>
+
+<p class=MsoNormal>                            &lt;div class=&quot;w-6 h-8
+bg-gradient-to-b from-slate-400 via-slate-200 to-slate-600 rounded-sm border
+border-slate-700 shadow-md flex items-center justify-center z-10&quot;&gt;</p>
+
+<p class=MsoNormal>                                &lt;div class=&quot;w-2 h-4
+bg-slate-800 rounded-full&quot;&gt;&lt;/div&gt;</p>
+
+<p class=MsoNormal>                            &lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;flex
+items-center gap-2 text-blue-400 font-digital font-bold text-lg
+group-hover:text-blue-300&quot;&gt;</p>
+
+<p class=MsoNormal>                            &lt;i class=&quot;fa-solid
+fa-scissors text-xl group-hover:rotate-12 transition&quot;&gt;&lt;/i&gt; SNIP
+BLUE WIRE (CB)</p>
+
+<p class=MsoNormal>                        &lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;span class=&quot;text-[11px]
+font-mono-tech text-slate-400 mt-1&quot;&gt;Cash Book Adjustment&lt;/span&gt;</p>
+
+<p class=MsoNormal>                    &lt;/button&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                    &lt;!-- Red Wire (BRS Adjustment) --&gt;</p>
+
+<p class=MsoNormal>                    &lt;button
+onclick=&quot;snipWire('BRS')&quot; class=&quot;group relative bg-slate-950
+hover:bg-red-950/40 border-2 border-slate-800 hover:border-red-500/80
+rounded-2xl p-6 flex flex-col items-center transition transform active:scale-95
+shadow-2xl overflow-hidden&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;absolute
+inset-x-0 top-0 h-1 bg-gradient-to-r from-red-500 via-amber-400 to-red-500
+opacity-0 group-hover:opacity-100 transition&quot;&gt;&lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;w-full h-12 flex
+items-center justify-between mb-4 px-2 relative&quot;&gt;</p>
+
+<p class=MsoNormal>                            &lt;div class=&quot;w-6 h-8
+bg-gradient-to-b from-slate-400 via-slate-200 to-slate-600 rounded-sm border
+border-slate-700 shadow-md flex items-center justify-center z-10&quot;&gt;</p>
+
+<p class=MsoNormal>                                &lt;div class=&quot;w-2 h-4
+bg-slate-800 rounded-full&quot;&gt;&lt;/div&gt;</p>
+
+<p class=MsoNormal>                            &lt;/div&gt;</p>
+
+<p class=MsoNormal>                            &lt;div class=&quot;flex-1 h-6
+mx-[-4px] bg-gradient-to-b from-red-400 via-red-600 to-red-950 rounded-full
+shadow-[0_5px_15px_rgba(220,38,38,0.5)] border-y border-red-300 relative flex
+items-center overflow-hidden&quot;&gt;</p>
+
+<p class=MsoNormal>                                &lt;div class=&quot;w-full
+h-1 bg-white/40 absolute top-1&quot;&gt;&lt;/div&gt;</p>
+
+<p class=MsoNormal>                                &lt;div class=&quot;w-full
+h-full opacity-20
+bg-[repeating-linear-gradient(-45deg,#fff,#fff_8px,transparent_8px,transparent_16px)]&quot;&gt;&lt;/div&gt;</p>
+
+<p class=MsoNormal>                                &lt;span
+class=&quot;absolute left-1/2 -translate-x-1/2 text-[10px] font-digital
+text-amber-200 font-bold tracking-widest drop-shadow&quot;&gt;BRS-WIRE //
+02&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;/div&gt;</p>
+
+<p class=MsoNormal>                            &lt;div class=&quot;w-6 h-8
+bg-gradient-to-b from-slate-400 via-slate-200 to-slate-600 rounded-sm border
+border-slate-700 shadow-md flex items-center justify-center z-10&quot;&gt;</p>
+
+<p class=MsoNormal>                                &lt;div class=&quot;w-2 h-4
+bg-slate-800 rounded-full&quot;&gt;&lt;/div&gt;</p>
+
+<p class=MsoNormal>                            &lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;flex
+items-center gap-2 text-red-400 font-digital font-bold text-lg
+group-hover:text-red-300&quot;&gt;</p>
+
+<p class=MsoNormal>                            &lt;i class=&quot;fa-solid
+fa-scissors text-xl group-hover:rotate-12 transition&quot;&gt;&lt;/i&gt; SNIP
+RED WIRE (BRS)</p>
+
+<p class=MsoNormal>                        &lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;span class=&quot;text-[11px]
+font-mono-tech text-slate-400 mt-1&quot;&gt;Bank Rec Statement
+Adjustment&lt;/span&gt;</p>
+
+<p class=MsoNormal>                    &lt;/button&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>            &lt;/div&gt;</p>
+
+<p class=MsoNormal>        &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        &lt;!-- ================= STAGE 1: CASH BOOK LEVER
+GAME ================= --&gt;</p>
+
+<p class=MsoNormal>        &lt;div id=&quot;stage1View&quot; class=&quot;hidden
+space-y-6&quot;&gt;</p>
+
+<p class=MsoNormal>            &lt;!-- Stage 1 Question Display --&gt;</p>
+
+<p class=MsoNormal>            &lt;div class=&quot;bg-slate-900/90 border-2
+border-emerald-500/40 rounded-xl p-4 sm:p-6 text-center shadow-lg relative
+screen-glow&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;absolute top-2 left-3
+text-[10px] font-mono-tech text-emerald-400/80&quot;&gt;STAGE 1 TERMINAL //
+CASH BOOK LEVER&lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;!-- Dedicated Stage Instruction Banner
+--&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;mt-3 mb-3 p-3
+bg-emerald-950/60 border border-emerald-800/80 rounded-lg text-xs
+font-mono-tech text-emerald-200 text-left&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;strong class=&quot;text-emerald-400
+block mb-0.5&quot;&gt;&lt;i class=&quot;fa-solid fa-circle-info
+mr-1&quot;&gt;&lt;/i&gt; Stage 1 Instruction:&lt;/strong&gt;</p>
+
+<p class=MsoNormal>                    For the cash book adjustments, move the
+lever to left or right, to represent whether the cash book should be debited
+(left) or credited (right).</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;text-xs text-slate-400
+uppercase tracking-widest mb-1&quot;&gt;Cash Book Adjustment Item&lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;div id=&quot;s1QuestionText&quot;
+class=&quot;text-xl sm:text-2xl font-bold text-emerald-300 min-h-[65px] flex
+items-center justify-center font-mono-tech py-2 px-4 bg-black/40 rounded-lg
+border border-emerald-950&quot;&gt;</p>
+
+<p class=MsoNormal>                    Loading Stage 1 Task...</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;mt-2 text-xs
+text-slate-400 font-mono-tech&quot;&gt;</p>
+
+<p class=MsoNormal>                    Action Required: Move the mechanical
+lever to &lt;span class=&quot;text-blue-400 font-bold&quot;&gt;Left
+(Dr.)&lt;/span&gt; or &lt;span class=&quot;text-red-400
+font-bold&quot;&gt;Right (Cr.)&lt;/span&gt;</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>            &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            &lt;!-- Stage 1 Mechanical Red-Knob Lever
+Assembly --&gt;</p>
+
+<p class=MsoNormal>            &lt;div class=&quot;bg-slate-900 border
+border-slate-800 rounded-2xl p-6 sm:p-10 flex flex-col items-center
+justify-center relative shadow-inner space-y-6&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;w-full max-w-xl flex
+justify-between items-center text-sm font-digital font-bold px-4&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;button
+onclick=&quot;triggerLever1('Dr')&quot; class=&quot;px-4 py-2 bg-blue-950
+hover:bg-blue-900 text-blue-400 border border-blue-600 rounded-xl transition
+shadow-lg flex items-center gap-2&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;i class=&quot;fa-solid
+fa-arrow-left&quot;&gt;&lt;/i&gt; LEFT SIDE (Dr.)</p>
+
+<p class=MsoNormal>                    &lt;/button&gt;</p>
+
+<p class=MsoNormal>                    &lt;span class=&quot;text-slate-500
+font-mono-tech text-xs&quot;&gt;SLIDE OR CLICK LEVER&lt;/span&gt;</p>
+
+<p class=MsoNormal>                    &lt;button
+onclick=&quot;triggerLever1('Cr')&quot; class=&quot;px-4 py-2 bg-red-950
+hover:bg-red-900 text-red-400 border border-red-600 rounded-xl transition
+shadow-lg flex items-center gap-2&quot;&gt;</p>
+
+<p class=MsoNormal>                        RIGHT SIDE (Cr.) &lt;i
+class=&quot;fa-solid fa-arrow-right&quot;&gt;&lt;/i&gt;</p>
+
+<p class=MsoNormal>                    &lt;/button&gt;</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;w-full max-w-xl h-16
+lever-track rounded-full border-2 border-slate-700 relative flex items-center
+px-4&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;div id=&quot;leverHandle1&quot;
+class=&quot;absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+lever-handle flex items-center justify-center&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;w-16 h-16
+rounded-full lever-knob border-2 border-red-300 flex items-center
+justify-center text-white text-xs font-bold font-digital shadow-2xl&quot;&gt;</p>
+
+<p class=MsoNormal>                            &lt;i class=&quot;fa-solid
+fa-grip-lines-vertical&quot;&gt;&lt;/i&gt;</p>
+
+<p class=MsoNormal>                        &lt;/div&gt;</p>
+
+<p class=MsoNormal>                    &lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                &lt;p class=&quot;text-xs font-mono-tech
+text-slate-400&quot;&gt;</p>
+
+<p class=MsoNormal>                    Click the buttons above or drag the red
+knob to select Dr. or Cr.</p>
+
+<p class=MsoNormal>                &lt;/p&gt;</p>
+
+<p class=MsoNormal>            &lt;/div&gt;</p>
+
+<p class=MsoNormal>        &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        &lt;!-- ================= STAGE 2: CASH BOOK ERRORS
+(1x vs 2x) ================= --&gt;</p>
+
+<p class=MsoNormal>        &lt;div id=&quot;stage2View&quot; class=&quot;hidden
+space-y-6&quot;&gt;</p>
+
+<p class=MsoNormal>            &lt;!-- Stage 2 Question Display --&gt;</p>
+
+<p class=MsoNormal>            &lt;div class=&quot;bg-slate-900/90 border-2
+border-amber-500/40 rounded-xl p-4 sm:p-6 text-center shadow-lg relative
+screen-glow&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;absolute top-2 left-3
+text-[10px] font-mono-tech text-amber-400/80&quot;&gt;STAGE 2 TERMINAL // CASH
+BOOK ERRORS&lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;!-- Dedicated Stage Instruction Banner
+--&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;mt-3 mb-3 p-3
+bg-amber-950/60 border border-amber-800/80 rounded-lg text-xs font-mono-tech
+text-amber-200 text-left&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;strong class=&quot;text-amber-400
+block mb-0.5&quot;&gt;&lt;i class=&quot;fa-solid fa-circle-info
+mr-1&quot;&gt;&lt;/i&gt; Stage 2 Instruction:&lt;/strong&gt;</p>
+
+<p class=MsoNormal>                    Correct cash book errors using 1x press
+(difference) or wrong-side reversals with 2x press.</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;text-xs text-slate-400
+uppercase tracking-widest mb-1&quot;&gt;Cash Book Error Scenario&lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;div id=&quot;s2QuestionText&quot;
+class=&quot;text-lg sm:text-xl font-bold text-amber-300 min-h-[65px] flex
+items-center justify-center font-mono-tech py-2 px-4 bg-black/40 rounded-lg
+border border-amber-950&quot;&gt;</p>
+
+<p class=MsoNormal>                    Loading Stage 2 Task...</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;mt-2 text-xs
+text-slate-300 font-mono-tech flex justify-center items-center gap-4&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;span&gt;1. Select Side: &lt;strong
+class=&quot;text-blue-400&quot;&gt;Dr.&lt;/strong&gt; or &lt;strong
+class=&quot;text-red-400&quot;&gt;Cr.&lt;/strong&gt;&lt;/span&gt;</p>
+
+<p class=MsoNormal>                    &lt;span&gt;2. Select Multiplier:
+&lt;strong class=&quot;text-emerald-400&quot;&gt;1x (Difference)&lt;/strong&gt;
+or &lt;strong class=&quot;text-purple-400&quot;&gt;2x (Double Entry
+Error)&lt;/strong&gt;&lt;/span&gt;</p>
+
+<p class=MsoNormal>                    &lt;span&gt;3. Press Red Knob to
+Execute&lt;/span&gt;</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>            &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            &lt;div class=&quot;bg-slate-900 border
+border-slate-800 rounded-2xl p-6 sm:p-8 flex flex-col items-center
+justify-center relative shadow-inner space-y-6&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;w-full max-w-xl grid
+grid-cols-1 sm:grid-cols-2 gap-4&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;div class=&quot;bg-slate-950 p-3
+rounded-xl border border-slate-800 text-center&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;text-xs
+font-mono-tech text-slate-400 mb-2&quot;&gt;TARGET ENTRY SIDE&lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;flex
+justify-center gap-3&quot;&gt;</p>
+
+<p class=MsoNormal>                            &lt;button
+id=&quot;s2SideDr&quot; onclick=&quot;setS2Side('Dr')&quot; class=&quot;flex-1
+py-2 bg-blue-950 border border-blue-600 text-blue-300 font-bold rounded-lg
+text-sm transition&quot;&gt;</p>
+
+<p class=MsoNormal>                                Dr. (DEBIT)</p>
+
+<p class=MsoNormal>                            &lt;/button&gt;</p>
+
+<p class=MsoNormal>                            &lt;button
+id=&quot;s2SideCr&quot; onclick=&quot;setS2Side('Cr')&quot; class=&quot;flex-1
+py-2 bg-slate-900 border border-slate-700 text-slate-400 font-bold rounded-lg
+text-sm transition&quot;&gt;</p>
+
+<p class=MsoNormal>                                Cr. (CREDIT)</p>
+
+<p class=MsoNormal>                            &lt;/button&gt;</p>
+
+<p class=MsoNormal>                        &lt;/div&gt;</p>
+
+<p class=MsoNormal>                    &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                    &lt;div class=&quot;bg-slate-950 p-3
+rounded-xl border border-slate-800 text-center&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;text-xs
+font-mono-tech text-slate-400 mb-2&quot;&gt;AMOUNT CORRECTION TYPE&lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;flex
+justify-center gap-3&quot;&gt;</p>
+
+<p class=MsoNormal>                            &lt;button
+id=&quot;s2Press1&quot; onclick=&quot;setS2Press(1)&quot; class=&quot;flex-1
+py-2 bg-emerald-950 border border-emerald-600 text-emerald-300 font-bold
+rounded-lg text-sm transition&quot;&gt;</p>
+
+<p class=MsoNormal>                                1x (Difference / 1x)</p>
+
+<p class=MsoNormal>                            &lt;/button&gt;</p>
+
+<p class=MsoNormal>                            &lt;button
+id=&quot;s2Press2&quot; onclick=&quot;setS2Press(2)&quot; class=&quot;flex-1
+py-2 bg-slate-900 border border-slate-700 text-slate-400 font-bold rounded-lg
+text-sm transition&quot;&gt;</p>
+
+<p class=MsoNormal>                                2x (Reversal Double)</p>
+
+<p class=MsoNormal>                            &lt;/button&gt;</p>
+
+<p class=MsoNormal>                        &lt;/div&gt;</p>
+
+<p class=MsoNormal>                    &lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;relative w-full max-w-md
+flex flex-col items-center justify-center py-4 bg-slate-950/60 rounded-2xl
+border border-slate-800&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;div class=&quot;text-xs
+font-mono-tech text-slate-400 mb-3&quot;&gt;COMMAND CONFIRMATION
+KNOB&lt;/div&gt;</p>
+
+<p class=MsoNormal>                    &lt;button
+onclick=&quot;confirmS2Action()&quot; id=&quot;s2KnobBtn&quot; class=&quot;w-24
+h-24 rounded-full lever-knob border-4 border-red-500 flex flex-col items-center
+justify-center text-white shadow-2xl transition transform active:scale-90&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;i class=&quot;fa-solid
+fa-power-off text-2xl text-red-100&quot;&gt;&lt;/i&gt;</p>
+
+<p class=MsoNormal>                        &lt;span class=&quot;text-[10px]
+font-mono-tech font-bold mt-1 text-red-200&quot;&gt;PRESS KNOB&lt;/span&gt;</p>
+
+<p class=MsoNormal>                    &lt;/button&gt;</p>
+
+<p class=MsoNormal>                    &lt;div class=&quot;mt-3 text-xs
+font-mono-tech text-amber-400&quot;&gt;</p>
+
+<p class=MsoNormal>                        CURRENT SELECTION: &lt;span
+id=&quot;s2StatusText&quot; class=&quot;font-bold underline
+text-white&quot;&gt;Dr. x 1&lt;/span&gt;</p>
+
+<p class=MsoNormal>                    &lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>            &lt;/div&gt;</p>
+
+<p class=MsoNormal>        &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        &lt;!-- ================= STAGE 3: BANK
+RECONCILIATION CIRCUIT WIRE GAME ================= --&gt;</p>
+
+<p class=MsoNormal>        &lt;div id=&quot;stage3View&quot; class=&quot;hidden
+space-y-6&quot;&gt;</p>
+
+<p class=MsoNormal>            &lt;!-- Stage 3 Question Display --&gt;</p>
+
+<p class=MsoNormal>            &lt;div class=&quot;bg-slate-900/90 border-2
+border-blue-500/40 rounded-xl p-4 sm:p-5 text-center shadow-lg relative
+screen-glow&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;absolute top-2 left-3
+text-[10px] font-mono-tech text-blue-400/80&quot;&gt;CIRCUIT LOGIC //
+RECONCILIATION DIFFERENCES&lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;!-- Dedicated Stage Instruction Banner
+--&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;mt-3 mb-3 p-3
+bg-blue-950/60 border border-blue-800/80 rounded-lg text-xs font-mono-tech
+text-blue-200 text-left&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;strong class=&quot;text-blue-400
+block mb-0.5&quot;&gt;&lt;i class=&quot;fa-solid fa-circle-info
+mr-1&quot;&gt;&lt;/i&gt; Stage 3 Instruction:&lt;/strong&gt;</p>
+
+<p class=MsoNormal>                    For Cash Book and Bank Statement
+discrepancies, show that if cash book balance is smaller than bank statement
+balance (CB &amp;lt; BS), or vice versa (CB &amp;gt; BS).</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;text-xs text-slate-400
+uppercase tracking-widest mb-1&quot;&gt;Bank Reconciliation
+Scenario&lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;div id=&quot;s3QuestionText&quot;
+class=&quot;text-lg sm:text-xl font-bold text-blue-300 min-h-[50px] flex
+items-center justify-center font-mono-tech py-2 px-4 bg-black/40 rounded-lg
+border border-blue-950&quot;&gt;</p>
+
+<p class=MsoNormal>                    Loading Stage 3 Item...</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>            &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            &lt;!-- Stage 3 Circuit Wire Board with
+SHORTCUTS ABOVE NUMBERPAD --&gt;</p>
+
+<p class=MsoNormal>            &lt;div class=&quot;flex flex-col items-center
+gap-4&quot;&gt;</p>
+
+<p class=MsoNormal>                </p>
+
+<p class=MsoNormal>                &lt;!-- ROUTE SHORTCUTS PLACED DIRECTLY
+ABOVE NUMBERPAD --&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;w-full max-w-lg
+bg-slate-900 border border-slate-800 rounded-xl p-3 flex flex-wrap
+sm:flex-nowrap justify-center gap-3&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;button
+onclick=&quot;autoConnectRoute([1,6,7])&quot; class=&quot;flex-1
+bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-600 text-left px-3
+py-2 rounded-lg transition group&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;flex
+justify-between items-center text-emerald-400 font-mono-tech text-xs
+font-bold&quot;&gt;</p>
+
+<p class=MsoNormal>                            &lt;span&gt;ROUTE 1 &amp;rarr; 6
+&amp;rarr; 7&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;i class=&quot;fa-solid
+fa-play group-hover:translate-x-0.5 transition&quot;&gt;&lt;/i&gt;</p>
+
+<p class=MsoNormal>                        &lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;text-[10px]
+text-slate-300 mt-0.5&quot;&gt;Target: &lt;strong&gt;CB Bal &amp;gt; BS
+Bal&lt;/strong&gt;&lt;/div&gt;</p>
+
+<p class=MsoNormal>                    &lt;/button&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                    &lt;button
+onclick=&quot;autoConnectRoute([3,4,9])&quot; class=&quot;flex-1
+bg-amber-950/80 hover:bg-amber-900 border border-amber-600 text-left px-3 py-2
+rounded-lg transition group&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;flex
+justify-between items-center text-amber-400 font-mono-tech text-xs
+font-bold&quot;&gt;</p>
+
+<p class=MsoNormal>                            &lt;span&gt;ROUTE 3 &amp;rarr; 4
+&amp;rarr; 9&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;i class=&quot;fa-solid
+fa-play group-hover:translate-x-0.5 transition&quot;&gt;&lt;/i&gt;</p>
+
+<p class=MsoNormal>                        &lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;text-[10px]
+text-slate-300 mt-0.5&quot;&gt;Target: &lt;strong&gt;CB Bal &amp;lt; BS
+Bal&lt;/strong&gt;&lt;/div&gt;</p>
+
+<p class=MsoNormal>                    &lt;/button&gt;</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                &lt;!-- Circuit Board Grid (1-9 Keypad with
+CB / BS Banners) --&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;w-full max-w-lg
+circuit-bg border-4 border-slate-800 rounded-2xl p-6 relative flex flex-col
+items-center justify-center shadow-2xl min-h-[380px]&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;svg id=&quot;wireCanvas&quot;
+class=&quot;absolute inset-0 w-full h-full z-10 pointer-events-none&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;defs&gt;</p>
+
+<p class=MsoNormal>                            &lt;filter id=&quot;glow&quot;
+x=&quot;-20%&quot; y=&quot;-20%&quot; width=&quot;140%&quot;
+height=&quot;140%&quot;&gt;</p>
+
+<p class=MsoNormal>                                &lt;feGaussianBlur
+stdDeviation=&quot;3&quot; result=&quot;blur&quot; /&gt;</p>
+
+<p class=MsoNormal>                                &lt;feComposite
+in=&quot;SourceGraphic&quot; in2=&quot;blur&quot; operator=&quot;over&quot;
+/&gt;</p>
+
+<p class=MsoNormal>                            &lt;/filter&gt;</p>
+
+<p class=MsoNormal>                        &lt;/defs&gt;</p>
+
+<p class=MsoNormal>                    &lt;/svg&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                    &lt;div class=&quot;flex items-center
+justify-center gap-3 sm:gap-4 w-full relative z-20&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;flex flex-col
+items-center justify-center bg-blue-950/80 border-2 border-blue-600/80
+text-blue-400 rounded-xl py-8 px-2 sm:px-3 shadow-lg h-full&quot;&gt;</p>
+
+<p class=MsoNormal>                            &lt;span
+class=&quot;font-digital text-base sm:text-lg font-bold tracking-widest
+[writing-mode:vertical-lr] rotate-180&quot;&gt;CASH BOOK&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;div class=&quot;mt-2 px-1.5
+py-0.5 bg-blue-500/20 rounded border border-blue-400 text-[10px] font-mono-tech
+font-bold text-blue-300&quot;&gt;CB&lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;grid grid-cols-3
+gap-3 sm:gap-5 w-full max-w-xs&quot;&gt;</p>
+
+<p class=MsoNormal>                            &lt;button
+onclick=&quot;handleTerminalClick(1)&quot; id=&quot;term-1&quot;
+class=&quot;terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl
+font-digital text-2xl text-slate-200 flex flex-col items-center justify-center
+relative hover:bg-slate-700&quot;&gt;</p>
+
+<p class=MsoNormal>                                1</p>
+
+<p class=MsoNormal>                                &lt;span
+class=&quot;text-[9px] font-mono-tech text-emerald-400 absolute
+bottom-1&quot;&gt;IN (&amp;gt;)&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;/button&gt;</p>
+
+<p class=MsoNormal>                            &lt;button
+onclick=&quot;handleTerminalClick(2)&quot; id=&quot;term-2&quot;
+class=&quot;terminal-btn h-16 bg-slate-800/60 border border-slate-700
+rounded-xl font-digital text-2xl text-slate-500 flex items-center
+justify-center hover:bg-slate-700&quot;&gt;</p>
+
+<p class=MsoNormal>                                2</p>
+
+<p class=MsoNormal>                            &lt;/button&gt;</p>
+
+<p class=MsoNormal>                            &lt;button
+onclick=&quot;handleTerminalClick(3)&quot; id=&quot;term-3&quot;
+class=&quot;terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl
+font-digital text-2xl text-slate-200 flex flex-col items-center justify-center
+relative hover:bg-slate-700&quot;&gt;</p>
+
+<p class=MsoNormal>                                3</p>
+
+<p class=MsoNormal>                                &lt;span
+class=&quot;text-[9px] font-mono-tech text-amber-400 absolute
+bottom-1&quot;&gt;IN (&amp;lt;)&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;/button&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                            &lt;button
+onclick=&quot;handleTerminalClick(4)&quot; id=&quot;term-4&quot;
+class=&quot;terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl
+font-digital text-2xl text-blue-300 flex flex-col items-center justify-center
+relative hover:bg-slate-700&quot;&gt;</p>
+
+<p class=MsoNormal>                                4</p>
+
+<p class=MsoNormal>                                &lt;span
+class=&quot;text-[9px] font-mono-tech text-blue-400 absolute
+bottom-1&quot;&gt;HUB B&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;/button&gt;</p>
+
+<p class=MsoNormal>                            &lt;button
+onclick=&quot;handleTerminalClick(5)&quot; id=&quot;term-5&quot;
+class=&quot;terminal-btn h-16 bg-slate-800/60 border border-slate-700
+rounded-xl font-digital text-2xl text-slate-500 flex items-center
+justify-center hover:bg-slate-700&quot;&gt;</p>
+
+<p class=MsoNormal>                                5</p>
+
+<p class=MsoNormal>                            &lt;/button&gt;</p>
+
+<p class=MsoNormal>                            &lt;button
+onclick=&quot;handleTerminalClick(6)&quot; id=&quot;term-6&quot;
+class=&quot;terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl
+font-digital text-2xl text-emerald-300 flex flex-col items-center justify-center
+relative hover:bg-slate-700&quot;&gt;</p>
+
+<p class=MsoNormal>                                6</p>
+
+<p class=MsoNormal>                                &lt;span
+class=&quot;text-[9px] font-mono-tech text-emerald-400 absolute
+bottom-1&quot;&gt;HUB A&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;/button&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                            &lt;button
+onclick=&quot;handleTerminalClick(7)&quot; id=&quot;term-7&quot;
+class=&quot;terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl
+font-digital text-2xl text-slate-200 flex flex-col items-center justify-center
+relative hover:bg-slate-700&quot;&gt;</p>
+
+<p class=MsoNormal>                                7</p>
+
+<p class=MsoNormal>                                &lt;span
+class=&quot;text-[9px] font-mono-tech text-emerald-400 absolute
+bottom-1&quot;&gt;OUT (&amp;gt;)&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;/button&gt;</p>
+
+<p class=MsoNormal>                            &lt;button
+onclick=&quot;handleTerminalClick(8)&quot; id=&quot;term-8&quot;
+class=&quot;terminal-btn h-16 bg-slate-800/60 border border-slate-700
+rounded-xl font-digital text-2xl text-slate-500 flex items-center
+justify-center hover:bg-slate-700&quot;&gt;</p>
+
+<p class=MsoNormal>                                8</p>
+
+<p class=MsoNormal>                            &lt;/button&gt;</p>
+
+<p class=MsoNormal>                            &lt;button
+onclick=&quot;handleTerminalClick(9)&quot; id=&quot;term-9&quot;
+class=&quot;terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl
+font-digital text-2xl text-slate-200 flex flex-col items-center justify-center
+relative hover:bg-slate-700&quot;&gt;</p>
+
+<p class=MsoNormal>                                9</p>
+
+<p class=MsoNormal>                                &lt;span
+class=&quot;text-[9px] font-mono-tech text-amber-400 absolute
+bottom-1&quot;&gt;OUT (&amp;lt;)&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;/button&gt;</p>
+
+<p class=MsoNormal>                        &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;flex flex-col
+items-center justify-center bg-blue-950/80 border-2 border-blue-600/80
+text-blue-400 rounded-xl py-8 px-2 sm:px-3 shadow-lg h-full&quot;&gt;</p>
+
+<p class=MsoNormal>                            &lt;span
+class=&quot;font-digital text-base sm:text-lg font-bold tracking-widest
+[writing-mode:vertical-lr]&quot;&gt;BANK STMT&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;div class=&quot;mt-2 px-1.5
+py-0.5 bg-blue-500/20 rounded border border-blue-400 text-[10px] font-mono-tech
+font-bold text-blue-300&quot;&gt;BS&lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;/div&gt;</p>
+
+<p class=MsoNormal>                    &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                    &lt;div class=&quot;mt-6 font-mono-tech
+text-xs bg-slate-950/90 border border-slate-800 px-4 py-2 rounded-lg
+text-slate-300 flex items-center gap-3 relative z-20 w-full max-w-xs&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;span&gt;PATH:&lt;/span&gt;</p>
+
+<p class=MsoNormal>                        &lt;span
+id=&quot;wirePathDisplay&quot; class=&quot;text-blue-400 font-bold
+tracking-widest text-sm&quot;&gt;[ NONE ]&lt;/span&gt;</p>
+
+<p class=MsoNormal>                        &lt;button
+onclick=&quot;resetWirePath()&quot; class=&quot;ml-auto text-[10px]
+text-red-400 hover:text-red-300 underline&quot;&gt;CLEAR&lt;/button&gt;</p>
+
+<p class=MsoNormal>                    &lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            &lt;/div&gt;</p>
+
+<p class=MsoNormal>        &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        &lt;!-- ================= STAGE 4: BANK
+RECONCILIATION ON UNADJUSTED CASH BOOK BALANCE ================= --&gt;</p>
+
+<p class=MsoNormal>        &lt;div id=&quot;stage4View&quot; class=&quot;hidden
+space-y-6&quot;&gt;</p>
+
+<p class=MsoNormal>            &lt;!-- Stage 4 Question Display --&gt;</p>
+
+<p class=MsoNormal>            &lt;div class=&quot;bg-slate-900/90 border-2
+border-purple-500/40 rounded-xl p-4 sm:p-5 text-center shadow-lg relative
+screen-glow&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;absolute top-2 left-3
+text-[10px] font-mono-tech text-purple-400/80&quot;&gt;STAGE 4 TERMINAL //
+UNADJUSTED CASH BOOK BRS&lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;!-- Dedicated Stage Instruction Banner
+--&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;mt-3 mb-3 p-3
+bg-purple-950/60 border border-purple-800/80 rounded-lg text-xs font-mono-tech
+text-purple-200 text-left&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;strong class=&quot;text-purple-400
+block mb-0.5&quot;&gt;&lt;i class=&quot;fa-solid fa-circle-info
+mr-1&quot;&gt;&lt;/i&gt; Stage 4 Instruction:&lt;/strong&gt;</p>
+
+<p class=MsoNormal>                    When Bank Reconciliation Statement
+reconciles the unadjusted cash book balance to bank statement balances, for
+Cash Book and Bank Statement discrepancies, show that if cash book balance is
+smaller than bank statement balance (CB &amp;lt; BS), or vice versa (CB
+&amp;gt; BS).</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;text-xs text-slate-400
+uppercase tracking-widest mb-1&quot;&gt;Bank Reconciliation Item (Unadjusted
+Cash Book Balance)&lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;div id=&quot;s4QuestionText&quot;
+class=&quot;text-lg sm:text-xl font-bold text-purple-300 min-h-[55px] flex
+items-center justify-center font-mono-tech py-2 px-4 bg-black/40 rounded-lg
+border border-purple-950&quot;&gt;</p>
+
+<p class=MsoNormal>                    Loading Stage 4 Item...</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>            &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            &lt;!-- Stage 4 Circuit Wire Board with
+SHORTCUTS ABOVE NUMBERPAD --&gt;</p>
+
+<p class=MsoNormal>            &lt;div class=&quot;flex flex-col items-center
+gap-4&quot;&gt;</p>
+
+<p class=MsoNormal>                </p>
+
+<p class=MsoNormal>                &lt;!-- ROUTE SHORTCUTS PLACED DIRECTLY
+ABOVE NUMBERPAD --&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;w-full max-w-lg
+bg-slate-900 border border-slate-800 rounded-xl p-3 flex flex-wrap
+sm:flex-nowrap justify-center gap-3&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;button
+onclick=&quot;autoConnectRoute4([1,6,7])&quot; class=&quot;flex-1
+bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-600 text-left px-3
+py-2 rounded-lg transition group&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;flex
+justify-between items-center text-emerald-400 font-mono-tech text-xs
+font-bold&quot;&gt;</p>
+
+<p class=MsoNormal>                            &lt;span&gt;ROUTE 1 &amp;rarr; 6
+&amp;rarr; 7&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;i class=&quot;fa-solid
+fa-play group-hover:translate-x-0.5 transition&quot;&gt;&lt;/i&gt;</p>
+
+<p class=MsoNormal>                        &lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;text-[10px]
+text-slate-300 mt-0.5&quot;&gt;Target: &lt;strong&gt;CB Bal &amp;gt; BS
+Bal&lt;/strong&gt;&lt;/div&gt;</p>
+
+<p class=MsoNormal>                    &lt;/button&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                    &lt;button
+onclick=&quot;autoConnectRoute4([3,4,9])&quot; class=&quot;flex-1
+bg-amber-950/80 hover:bg-amber-900 border border-amber-600 text-left px-3 py-2
+rounded-lg transition group&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;flex
+justify-between items-center text-amber-400 font-mono-tech text-xs
+font-bold&quot;&gt;</p>
+
+<p class=MsoNormal>                            &lt;span&gt;ROUTE 3 &amp;rarr; 4
+&amp;rarr; 9&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;i class=&quot;fa-solid
+fa-play group-hover:translate-x-0.5 transition&quot;&gt;&lt;/i&gt;</p>
+
+<p class=MsoNormal>                        &lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;text-[10px]
+text-slate-300 mt-0.5&quot;&gt;Target: &lt;strong&gt;CB Bal &amp;lt; BS
+Bal&lt;/strong&gt;&lt;/div&gt;</p>
+
+<p class=MsoNormal>                    &lt;/button&gt;</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                &lt;!-- Circuit Board Grid (1-9 Keypad with
+CB / BS Banners) --&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;w-full max-w-lg
+circuit-bg border-4 border-slate-800 rounded-2xl p-6 relative flex flex-col
+items-center justify-center shadow-2xl min-h-[380px]&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;svg id=&quot;wireCanvas4&quot;
+class=&quot;absolute inset-0 w-full h-full z-10 pointer-events-none&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;defs&gt;</p>
+
+<p class=MsoNormal>                            &lt;filter id=&quot;glow4&quot;
+x=&quot;-20%&quot; y=&quot;-20%&quot; width=&quot;140%&quot;
+height=&quot;140%&quot;&gt;</p>
+
+<p class=MsoNormal>                                &lt;feGaussianBlur
+stdDeviation=&quot;3&quot; result=&quot;blur&quot; /&gt;</p>
+
+<p class=MsoNormal>                                &lt;feComposite
+in=&quot;SourceGraphic&quot; in2=&quot;blur&quot; operator=&quot;over&quot;
+/&gt;</p>
+
+<p class=MsoNormal>                            &lt;/filter&gt;</p>
+
+<p class=MsoNormal>                        &lt;/defs&gt;</p>
+
+<p class=MsoNormal>                    &lt;/svg&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                    &lt;div class=&quot;flex items-center
+justify-center gap-3 sm:gap-4 w-full relative z-20&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;flex flex-col
+items-center justify-center bg-blue-950/80 border-2 border-blue-600/80
+text-blue-400 rounded-xl py-8 px-2 sm:px-3 shadow-lg h-full&quot;&gt;</p>
+
+<p class=MsoNormal>                            &lt;span
+class=&quot;font-digital text-base sm:text-lg font-bold tracking-widest
+[writing-mode:vertical-lr] rotate-180&quot;&gt;CASH BOOK&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;div class=&quot;mt-2 px-1.5
+py-0.5 bg-blue-500/20 rounded border border-blue-400 text-[10px] font-mono-tech
+font-bold text-blue-300&quot;&gt;CB&lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;grid grid-cols-3
+gap-3 sm:gap-5 w-full max-w-xs&quot;&gt;</p>
+
+<p class=MsoNormal>                            &lt;button
+onclick=&quot;handleTerminalClick4(1)&quot; id=&quot;term4-1&quot;
+class=&quot;terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl
+font-digital text-2xl text-slate-200 flex flex-col items-center justify-center
+relative hover:bg-slate-700&quot;&gt;</p>
+
+<p class=MsoNormal>                                1</p>
+
+<p class=MsoNormal>                                &lt;span
+class=&quot;text-[9px] font-mono-tech text-emerald-400 absolute
+bottom-1&quot;&gt;IN (&amp;gt;)&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;/button&gt;</p>
+
+<p class=MsoNormal>                            &lt;button
+onclick=&quot;handleTerminalClick4(2)&quot; id=&quot;term4-2&quot;
+class=&quot;terminal-btn h-16 bg-slate-800/60 border border-slate-700
+rounded-xl font-digital text-2xl text-slate-500 flex items-center justify-center
+hover:bg-slate-700&quot;&gt;</p>
+
+<p class=MsoNormal>                                2</p>
+
+<p class=MsoNormal>                            &lt;/button&gt;</p>
+
+<p class=MsoNormal>                            &lt;button
+onclick=&quot;handleTerminalClick4(3)&quot; id=&quot;term4-3&quot;
+class=&quot;terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl
+font-digital text-2xl text-slate-200 flex flex-col items-center justify-center
+relative hover:bg-slate-700&quot;&gt;</p>
+
+<p class=MsoNormal>                                3</p>
+
+<p class=MsoNormal>                                &lt;span
+class=&quot;text-[9px] font-mono-tech text-amber-400 absolute
+bottom-1&quot;&gt;IN (&amp;lt;)&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;/button&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                            &lt;button
+onclick=&quot;handleTerminalClick4(4)&quot; id=&quot;term4-4&quot;
+class=&quot;terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl
+font-digital text-2xl text-blue-300 flex flex-col items-center justify-center
+relative hover:bg-slate-700&quot;&gt;</p>
+
+<p class=MsoNormal>                                4</p>
+
+<p class=MsoNormal>                                &lt;span
+class=&quot;text-[9px] font-mono-tech text-blue-400 absolute
+bottom-1&quot;&gt;HUB B&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;/button&gt;</p>
+
+<p class=MsoNormal>                            &lt;button
+onclick=&quot;handleTerminalClick4(5)&quot; id=&quot;term4-5&quot;
+class=&quot;terminal-btn h-16 bg-slate-800/60 border border-slate-700
+rounded-xl font-digital text-2xl text-slate-500 flex items-center justify-center
+hover:bg-slate-700&quot;&gt;</p>
+
+<p class=MsoNormal>                                5</p>
+
+<p class=MsoNormal>                            &lt;/button&gt;</p>
+
+<p class=MsoNormal>                            &lt;button
+onclick=&quot;handleTerminalClick4(6)&quot; id=&quot;term4-6&quot;
+class=&quot;terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl
+font-digital text-2xl text-emerald-300 flex flex-col items-center justify-center
+relative hover:bg-slate-700&quot;&gt;</p>
+
+<p class=MsoNormal>                                6</p>
+
+<p class=MsoNormal>                                &lt;span
+class=&quot;text-[9px] font-mono-tech text-emerald-400 absolute
+bottom-1&quot;&gt;HUB A&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;/button&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                            &lt;button
+onclick=&quot;handleTerminalClick4(7)&quot; id=&quot;term4-7&quot;
+class=&quot;terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl
+font-digital text-2xl text-slate-200 flex flex-col items-center justify-center
+relative hover:bg-slate-700&quot;&gt;</p>
+
+<p class=MsoNormal>                                7</p>
+
+<p class=MsoNormal>                                &lt;span
+class=&quot;text-[9px] font-mono-tech text-emerald-400 absolute
+bottom-1&quot;&gt;OUT (&amp;gt;)&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;/button&gt;</p>
+
+<p class=MsoNormal>                            &lt;button
+onclick=&quot;handleTerminalClick4(8)&quot; id=&quot;term4-8&quot;
+class=&quot;terminal-btn h-16 bg-slate-800/60 border border-slate-700
+rounded-xl font-digital text-2xl text-slate-500 flex items-center justify-center
+hover:bg-slate-700&quot;&gt;</p>
+
+<p class=MsoNormal>                                8</p>
+
+<p class=MsoNormal>                            &lt;/button&gt;</p>
+
+<p class=MsoNormal>                            &lt;button
+onclick=&quot;handleTerminalClick4(9)&quot; id=&quot;term4-9&quot;
+class=&quot;terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl
+font-digital text-2xl text-slate-200 flex flex-col items-center justify-center
+relative hover:bg-slate-700&quot;&gt;</p>
+
+<p class=MsoNormal>                                9</p>
+
+<p class=MsoNormal>                                &lt;span
+class=&quot;text-[9px] font-mono-tech text-amber-400 absolute
+bottom-1&quot;&gt;OUT (&amp;lt;)&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;/button&gt;</p>
+
+<p class=MsoNormal>                        &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;flex flex-col
+items-center justify-center bg-purple-950/80 border-2 border-purple-600/80
+text-purple-400 rounded-xl py-8 px-2 sm:px-3 shadow-lg h-full&quot;&gt;</p>
+
+<p class=MsoNormal>                            &lt;span
+class=&quot;font-digital text-base sm:text-lg font-bold tracking-widest
+[writing-mode:vertical-lr]&quot;&gt;BANK STMT&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;div class=&quot;mt-2 px-1.5
+py-0.5 bg-purple-500/20 rounded border border-purple-400 text-[10px]
+font-mono-tech font-bold text-purple-300&quot;&gt;BS&lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;/div&gt;</p>
+
+<p class=MsoNormal>                    &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                    &lt;div class=&quot;mt-6 font-mono-tech
+text-xs bg-slate-950/90 border border-slate-800 px-4 py-2 rounded-lg
+text-slate-300 flex items-center gap-3 relative z-20 w-full max-w-xs&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;span&gt;PATH:&lt;/span&gt;</p>
+
+<p class=MsoNormal>                        &lt;span
+id=&quot;wirePathDisplay4&quot; class=&quot;text-purple-400 font-bold
+tracking-widest text-sm&quot;&gt;[ NONE ]&lt;/span&gt;</p>
+
+<p class=MsoNormal>                        &lt;button
+onclick=&quot;resetWirePath4()&quot; class=&quot;ml-auto text-[10px]
+text-red-400 hover:text-red-300 underline&quot;&gt;CLEAR&lt;/button&gt;</p>
+
+<p class=MsoNormal>                    &lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            &lt;/div&gt;</p>
+
+<p class=MsoNormal>        &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>    &lt;/main&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>    &lt;!-- RESULTS MODAL OVERLAY --&gt;</p>
+
+<p class=MsoNormal>    &lt;div id=&quot;resultsModal&quot; class=&quot;fixed
+inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4
+hidden&quot;&gt;</p>
+
+<p class=MsoNormal>        &lt;div class=&quot;bg-slate-900 border-2
+border-emerald-500 rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative
+max-h-[90vh] flex flex-col&quot;&gt;</p>
+
+<p class=MsoNormal>            </p>
+
+<p class=MsoNormal>            &lt;div class=&quot;flex justify-between
+items-center border-b border-slate-800 pb-3 mb-4&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;flex items-center gap-2
+text-emerald-400 font-digital font-bold text-lg&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;svg class=&quot;w-6 h-6 fill-current
+text-emerald-400&quot; viewBox=&quot;0 0 24 24&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;path d=&quot;M19 3H5c-1.1 0-2
+.9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v3l-5-4
+5-4v3h4v2z&quot;/&gt;</p>
+
+<p class=MsoNormal>                    &lt;/svg&gt;</p>
+
+<p class=MsoNormal>                    &lt;span&gt;SESSION RESULTS &amp;
+INCORRECT ANSWERS&lt;/span&gt;</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;button
+onclick=&quot;closeResultsModal()&quot; class=&quot;text-slate-400
+hover:text-white p-1 rounded-lg&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;i class=&quot;fa-solid fa-xmark
+text-xl&quot;&gt;&lt;/i&gt;</p>
+
+<p class=MsoNormal>                &lt;/button&gt;</p>
+
+<p class=MsoNormal>            &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            &lt;!-- Incorrect Answers Scroll List --&gt;</p>
+
+<p class=MsoNormal>            &lt;div class=&quot;flex-1 overflow-y-auto pr-2
+mb-4 space-y-3 font-mono-tech text-xs&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;div id=&quot;noErrorsNotice&quot;
+class=&quot;text-slate-400 text-center py-8 italic&quot;&gt;</p>
+
+<p class=MsoNormal>                    No incorrect attempts recorded yet. Keep
+up the good work!</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>                &lt;div id=&quot;errorItemsContainer&quot;
+class=&quot;space-y-2&quot;&gt;&lt;/div&gt;</p>
+
+<p class=MsoNormal>            &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            &lt;!-- Footer Action Buttons --&gt;</p>
+
+<p class=MsoNormal>            &lt;div class=&quot;border-t border-slate-800
+pt-3 flex flex-wrap justify-between items-center gap-3&quot;&gt;</p>
+
+<p class=MsoNormal>                &lt;button
+onclick=&quot;copyIncorrectAnswers()&quot; class=&quot;px-4 py-2 bg-blue-600
+hover:bg-blue-500 text-white rounded-lg font-mono-tech text-xs font-bold flex
+items-center gap-2 shadow&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;i class=&quot;fa-solid
+fa-copy&quot;&gt;&lt;/i&gt; COPY INCORRECT ANSWERS</p>
+
+<p class=MsoNormal>                &lt;/button&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                &lt;div class=&quot;flex items-center
+gap-2&quot;&gt;</p>
+
+<p class=MsoNormal>                    &lt;button
+onclick=&quot;closeResultsModal()&quot; class=&quot;px-4 py-2 bg-slate-800
+hover:bg-slate-700 text-slate-200 rounded-lg font-mono-tech text-xs&quot;&gt;</p>
+
+<p class=MsoNormal>                        RESUME GAME</p>
+
+<p class=MsoNormal>                    &lt;/button&gt;</p>
+
+<p class=MsoNormal>                    &lt;button onclick=&quot;restartGame();
+closeResultsModal();&quot; class=&quot;px-4 py-2 bg-red-900 hover:bg-red-800
+text-white rounded-lg font-mono-tech text-xs font-bold&quot;&gt;</p>
+
+<p class=MsoNormal>                        RESTART</p>
+
+<p class=MsoNormal>                    &lt;/button&gt;</p>
+
+<p class=MsoNormal>                &lt;/div&gt;</p>
+
+<p class=MsoNormal>            &lt;/div&gt;</p>
+
+<p class=MsoNormal>            </p>
+
+<p class=MsoNormal>            &lt;div id=&quot;copyToast&quot;
+class=&quot;hidden absolute bottom-16 left-1/2 -translate-x-1/2 bg-emerald-600
+text-white font-mono-tech text-xs px-3 py-1.5 rounded shadow-lg border
+border-emerald-400&quot;&gt;</p>
+
+<p class=MsoNormal>                Copied to clipboard!</p>
+
+<p class=MsoNormal>            &lt;/div&gt;</p>
+
+<p class=MsoNormal>        &lt;/div&gt;</p>
+
+<p class=MsoNormal>    &lt;/div&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>    &lt;!-- FOOTER --&gt;</p>
+
+<p class=MsoNormal>    &lt;footer class=&quot;mt-4 text-center text-xs
+font-mono-tech text-slate-500&quot;&gt;</p>
+
+<p class=MsoNormal>        BAFS Dojo &amp;copy; Cash Book &amp; Bank
+Reconciliation Bomb Defusal Simulator</p>
+
+<p class=MsoNormal>    &lt;/footer&gt;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>    &lt;!-- GAME LOGIC SCRIPT --&gt;</p>
+
+<p class=MsoNormal>    &lt;script&gt;</p>
+
+<p class=MsoNormal>        // Audio Synthesizer (Web Audio API)</p>
+
+<p class=MsoNormal>        const AudioCtx = window.AudioContext ||
+window.webkitAudioContext;</p>
+
+<p class=MsoNormal>        let audioCtx = null;</p>
+
+<p class=MsoNormal>        let isAudioMuted = false;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function playSound(type) {</p>
+
+<p class=MsoNormal>            if (isAudioMuted) return;</p>
+
+<p class=MsoNormal>            try {</p>
+
+<p class=MsoNormal>                if (!audioCtx) audioCtx = new AudioCtx();</p>
+
+<p class=MsoNormal>                const osc = audioCtx.createOscillator();</p>
+
+<p class=MsoNormal>                const gain = audioCtx.createGain();</p>
+
+<p class=MsoNormal>                osc.connect(gain);</p>
+
+<p class=MsoNormal>                gain.connect(audioCtx.destination);</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                const now = audioCtx.currentTime;</p>
+
+<p class=MsoNormal>                if (type === 'click') {</p>
+
+<p class=MsoNormal>                    osc.type = 'sine';</p>
+
+<p class=MsoNormal>                    osc.frequency.setValueAtTime(600, now);</p>
+
+<p class=MsoNormal>                    gain.gain.setValueAtTime(0.05, now);</p>
+
+<p class=MsoNormal>                   
+gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);</p>
+
+<p class=MsoNormal>                    osc.start(now);</p>
+
+<p class=MsoNormal>                    osc.stop(now + 0.05);</p>
+
+<p class=MsoNormal>                } else if (type === 'snip') {</p>
+
+<p class=MsoNormal>                    osc.type = 'triangle';</p>
+
+<p class=MsoNormal>                    osc.frequency.setValueAtTime(300, now);</p>
+
+<p class=MsoNormal>                   
+osc.frequency.exponentialRampToValueAtTime(150, now + 0.08);</p>
+
+<p class=MsoNormal>                    gain.gain.setValueAtTime(0.1, now);</p>
+
+<p class=MsoNormal>                   
+gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);</p>
+
+<p class=MsoNormal>                    osc.start(now);</p>
+
+<p class=MsoNormal>                    osc.stop(now + 0.08);</p>
+
+<p class=MsoNormal>                } else if (type === 'correct') {</p>
+
+<p class=MsoNormal>                    osc.type = 'sine';</p>
+
+<p class=MsoNormal>                    osc.frequency.setValueAtTime(523.25,
+now);</p>
+
+<p class=MsoNormal>                    osc.frequency.setValueAtTime(659.25, now
++ 0.25);</p>
+
+<p class=MsoNormal>                    gain.gain.setValueAtTime(0.1, now);</p>
+
+<p class=MsoNormal>                   
+gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);</p>
+
+<p class=MsoNormal>                    osc.start(now);</p>
+
+<p class=MsoNormal>                    osc.stop(now + 0.25);</p>
+
+<p class=MsoNormal>                } else if (type === 'error') {</p>
+
+<p class=MsoNormal>                    osc.type = 'sawtooth';</p>
+
+<p class=MsoNormal>                    osc.frequency.setValueAtTime(140, now);</p>
+
+<p class=MsoNormal>                    osc.frequency.setValueAtTime(110, now +
+0.3);</p>
+
+<p class=MsoNormal>                    gain.gain.setValueAtTime(0.2, now);</p>
+
+<p class=MsoNormal>                   
+gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);</p>
+
+<p class=MsoNormal>                    osc.start(now);</p>
+
+<p class=MsoNormal>                    osc.stop(now + 0.3);</p>
+
+<p class=MsoNormal>                } else if (type === 'stageWin') {</p>
+
+<p class=MsoNormal>                    osc.type = 'triangle';</p>
+
+<p class=MsoNormal>                    osc.frequency.setValueAtTime(440, now);</p>
+
+<p class=MsoNormal>                    osc.frequency.setValueAtTime(554.37, now
++ 0.1);</p>
+
+<p class=MsoNormal>                    osc.frequency.setValueAtTime(659.25, now
++ 0.2);</p>
+
+<p class=MsoNormal>                    osc.frequency.setValueAtTime(880, now +
+0.3);</p>
+
+<p class=MsoNormal>                    gain.gain.setValueAtTime(0.15, now);</p>
+
+<p class=MsoNormal>                   
+gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);</p>
+
+<p class=MsoNormal>                    osc.start(now);</p>
+
+<p class=MsoNormal>                    osc.stop(now + 0.5);</p>
+
+<p class=MsoNormal>                }</p>
+
+<p class=MsoNormal>            } catch (e) { console.error(e); }</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function toggleAudioMute() {</p>
+
+<p class=MsoNormal>            isAudioMuted = !isAudioMuted;</p>
+
+<p class=MsoNormal>            const icon =
+document.getElementById('muteIcon');</p>
+
+<p class=MsoNormal>            icon.className = isAudioMuted ? 'fa-solid
+fa-volume-xmark text-red-400' : 'fa-solid fa-volume-high text-slate-300';</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        // FULL COMPLETE UNTRIMMED DATASETS FOR ALL STAGES</p>
+
+<p class=MsoNormal>        const stage0Data = [</p>
+
+<p class=MsoNormal>            { text: &quot;Deposits were entered in the bank
+account but were not credited by the bank until start of next month.&quot;,
+target: &quot;BRS&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;A cheque paid to a creditor
+remained outstanding.&quot;, target: &quot;BRS&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;The company instructed the bank to
+transfer from the savings account to the current account.  The bank mistakenly
+made the transfer in reverse.&quot;, target: &quot;BRS&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;Dividends credited by the bank
+were not recorded in the bank account.&quot;, target: &quot;CB&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;A cheque was received,
+representing a refund from a supplier. However, it was recorded as a payment to
+the supplier by the bookkeeper.&quot;, target: &quot;CB&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;A returned cheque (received from a
+trade debtor) was shown on the bank statement but not in the bank
+account.&quot;, target: &quot;CB&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;A standing order for an insurance
+premium payment was recorded on the bank statement but not in the bank
+account.&quot;, target: &quot;CB&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;A customer settled her account
+with a cheque of $570, after deducting a $30 cash discount. The gross amount
+was recorded in the bank account and the personal account. No entries were made
+for the discount.&quot;, target: &quot;CB&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;Cheques drawn by the had not been
+presented to the bank.&quot;, target: &quot;BRS&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;The business had recorded in the
+books a payment of $1,880 to Paul Lee as $2,960.&quot;, target: &quot;CB&quot;
+},</p>
+
+<p class=MsoNormal>            { text: &quot;Bank interest charges had not been
+entered in the cash at bank account.&quot;, target: &quot;CB&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;Rates payment by autopay had not
+been entered in the cash book.&quot;, target: &quot;CB&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;A credit transfer from Peter Pang
+had not been entered in the cash book.&quot;, target: &quot;CB&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;A cheque from David Ho had been
+returned by the bank marked 'refer to drawer' but this had not been recorded in
+the cash book.&quot;, target: &quot;CB&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;The bank had not credited a cheque
+banked on 31 March 2023.&quot;, target: &quot;BRS&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;The bank had wrongly charged
+overdraft interest.&quot;, target: &quot;BRS&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;A cheque receipt from John had
+been wrongly recorded as a payment to John.&quot;, target: &quot;CB&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;A cheque received as sales and
+banked had been returned and marked ‘insufficient funds’. No entry had been
+made in the books to record this returned cheque.&quot;, target: &quot;CB&quot;
+},</p>
+
+<p class=MsoNormal>            { text: &quot;Jimmy Chan received a personal
+cheque from his friend. He mistakenly deposited it into the business bank
+account but no entries had been made in the books of the business.&quot;,
+target: &quot;BRS&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;A direct debit for electricity of
+$900 had not yet been recorded in the books.&quot;, target: &quot;CB&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;The firm was notified that after
+month end, an adjustment would be made by the bank in for a debit entry made in
+error before month end.&quot;, target: &quot;BRS&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;During 2016, a term deposit of
+$60,000 was made and recorded in the term deposit account. The bank credited an
+amount of $61,200, the principal and interest, to the account of the firm when
+the term deposit matured on 2 January 2017, but the firm recorded the receipt
+on 31 December 2016. (BRS date: 31 Dec 2016)&quot;, target: &quot;CB&quot; }</p>
+
+<p class=MsoNormal>        ];</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        const stage1Data = [</p>
+
+<p class=MsoNormal>            { text: &quot;Bank charges&quot;, target:
+&quot;Cr&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;Dishonoured cheque (as
+recipient)&quot;, target: &quot;Cr&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;Dishonoured cheque (as
+issuer)&quot;, target: &quot;Dr&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;Interest income&quot;, target:
+&quot;Dr&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;Overdraft / loan interest
+expenses&quot;, target: &quot;Cr&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;Credit transfer / Direct
+credit&quot;, target: &quot;Dr&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;Standing order&quot;, target:
+&quot;Cr&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;Direct debit&quot;, target:
+&quot;Cr&quot; }</p>
+
+<p class=MsoNormal>        ];</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        const stage2Data = [</p>
+
+<p class=MsoNormal>            { text: &quot;Dr. entry has been recorded on Cr.
+side&quot;, targetSide: &quot;Dr&quot;, targetPress: 2 },</p>
+
+<p class=MsoNormal>            { text: &quot;Dr. side has been overstated /
+overcast&quot;, targetSide: &quot;Cr&quot;, targetPress: 1 },</p>
+
+<p class=MsoNormal>            { text: &quot;Dr. entry has been incorrectly
+entered twice&quot;, targetSide: &quot;Cr&quot;, targetPress: 1 },</p>
+
+<p class=MsoNormal>            { text: &quot;Dr. side has been understated /
+undercast&quot;, targetSide: &quot;Dr&quot;, targetPress: 1 },</p>
+
+<p class=MsoNormal>            { text: &quot;Cr. side has been overstated /
+overcast&quot;, targetSide: &quot;Dr&quot;, targetPress: 1 },</p>
+
+<p class=MsoNormal>            { text: &quot;Cr. side has been understated /
+undercast&quot;, targetSide: &quot;Cr&quot;, targetPress: 1 },</p>
+
+<p class=MsoNormal>            { text: &quot;Cr. entry has been recorded on Dr.
+side&quot;, targetSide: &quot;Cr&quot;, targetPress: 2 },</p>
+
+<p class=MsoNormal>            { text: &quot;Cr. entry has been incorrectly
+entered twice&quot;, targetSide: &quot;Dr&quot;, targetPress: 1 }</p>
+
+<p class=MsoNormal>        ];</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        const stage3Data = [</p>
+
+<p class=MsoNormal>            { text: &quot;Deposits were entered in the bank
+account but were not credited by the bank until start of next month.&quot;,
+target: &quot;&gt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;Cheques drawn by the firm had not
+been presented to the bank.&quot;, target: &quot;&lt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;The bank had not credited a cheque
+banked on month end.&quot;, target: &quot;&gt;&quot; }</p>
+
+<p class=MsoNormal>        ];</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        const stage4Data = [</p>
+
+<p class=MsoNormal>            { text: &quot;Deposits were entered in the bank
+account but were not credited by the bank until start of next month.&quot;,
+target: &quot;&gt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;A cheque paid to a creditor
+remained outstanding.&quot;, target: &quot;&lt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;The company instructed the bank to
+transfer from the savings account to the current account. The bank mistakenly
+made the transfer in reverse.&quot;, target: &quot;&gt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;Dividends credited by the bank
+were not recorded in the bank account.&quot;, target: &quot;&lt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;A cheque was received,
+representing a refund from a supplier. However, it was recorded as a payment to
+the supplier by the bookkeeper.&quot;, target: &quot;&lt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;A returned cheque (received from a
+trade debtor) was shown on the bank statement but not in the bank
+account.&quot;, target: &quot;&gt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;A standing order for an insurance
+premium payment was recorded on the bank statement but not in the bank
+account.&quot;, target: &quot;&gt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;A customer settled her account
+with a cheque of $570, after deducting a $30 cash discount. The gross amount
+was recorded in the bank account and the personal account. No entries were made
+for the discount.&quot;, target: &quot;&gt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;Cheques drawn by the firm had not
+been presented to the bank.&quot;, target: &quot;&lt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;The business had recorded in the
+books a payment of $1,880 to Paul Lee as $2,960.&quot;, target:
+&quot;&lt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;Bank interest charges had not been
+entered in the cash at bank account.&quot;, target: &quot;&gt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;Rates payment by autopay had not
+been entered in the cash book.&quot;, target: &quot;&gt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;A credit transfer from Peter Pang
+had not been entered in the cash book.&quot;, target: &quot;&lt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;A cheque from David Ho had been
+returned by the bank marked 'refer to drawer' but this had not been recorded in
+the cash book.&quot;, target: &quot;&gt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;The bank had not credited a cheque
+banked on 31 March 2023.&quot;, target: &quot;&gt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;The bank had wrongly charged
+overdraft interest.&quot;, target: &quot;&gt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;A cheque receipt from John had
+been wrongly recorded as a payment to John.&quot;, target: &quot;&lt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;A cheque received as sales and
+banked had been returned and marked ‘insufficient funds’. No entry had been
+made in the books to record this returned cheque.&quot;, target:
+&quot;&gt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;Jimmy Chan received a personal
+cheque from his friend. He mistakenly deposited it into the business bank
+account but no entries had been made in the books of the business.&quot;,
+target: &quot;&lt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;A direct debit for electricity had
+not yet been recorded in the books.&quot;, target: &quot;&gt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;The firm was notified that after
+month end, an adjustment would be made by the bank for a debit entry made in
+error before month end.&quot;, target: &quot;&gt;&quot; },</p>
+
+<p class=MsoNormal>            { text: &quot;During 2016, a term deposit of
+$60,000 was made and recorded in the term deposit account. The bank credited an
+amount of $61,200, the principal and interest, to the account of the firm when
+the term deposit matured on 2 January 2017, but the firm recorded the receipt
+on 31 December 2016. (month end date: 31 Dec 2016)&quot;, target:
+&quot;&gt;&quot; }</p>
+
+<p class=MsoNormal>        ];</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        // GAME STATE VARIABLES</p>
+
+<p class=MsoNormal>        let currentStage = -1; // Start at Intro Page (-1)</p>
+
+<p class=MsoNormal>        let s0Idx = 0, s1Idx = 0, s2Idx = 0, s3Idx = 0,
+s4Idx = 0;</p>
+
+<p class=MsoNormal>        let score = 0;</p>
+
+<p class=MsoNormal>        let totalTimeSeconds = 900; // 15 minutes</p>
+
+<p class=MsoNormal>        let timerInterval = null;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        // Active randomized question queues for current
+session</p>
+
+<p class=MsoNormal>        let activeStage0Data = [];</p>
+
+<p class=MsoNormal>        let activeStage1Data = [];</p>
+
+<p class=MsoNormal>        let activeStage2Data = [];</p>
+
+<p class=MsoNormal>        let activeStage3Data = [];</p>
+
+<p class=MsoNormal>        let activeStage4Data = [];</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        // Fisher-Yates Array Shuffle Utility Function</p>
+
+<p class=MsoNormal>        function shuffleArray(array) {</p>
+
+<p class=MsoNormal>            const arr = [...array];</p>
+
+<p class=MsoNormal>            for (let i = arr.length - 1; i &gt; 0; i--) {</p>
+
+<p class=MsoNormal>                const j = Math.floor(Math.random() * (i +
+1));</p>
+
+<p class=MsoNormal>                [arr[i], arr[j]] = [arr[j], arr[i]];</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>            return arr;</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function randomizeAllStageQuestions() {</p>
+
+<p class=MsoNormal>            activeStage0Data = shuffleArray(stage0Data);</p>
+
+<p class=MsoNormal>            activeStage1Data = shuffleArray(stage1Data);</p>
+
+<p class=MsoNormal>            activeStage2Data = shuffleArray(stage2Data);</p>
+
+<p class=MsoNormal>            activeStage3Data = shuffleArray(stage3Data);</p>
+
+<p class=MsoNormal>            activeStage4Data = shuffleArray(stage4Data);</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        let s2SelectedSide = 'Dr';</p>
+
+<p class=MsoNormal>        let s2SelectedPress = 1;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        let s3CurrentWirePath = [];</p>
+
+<p class=MsoNormal>        let s4CurrentWirePath = [];</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        let incorrectAnswersLog = [];</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function logError(stageName, questionText,
+chosenAnswer, correctAnswer) {</p>
+
+<p class=MsoNormal>            incorrectAnswersLog.push({</p>
+
+<p class=MsoNormal>                stage: stageName,</p>
+
+<p class=MsoNormal>                question: questionText,</p>
+
+<p class=MsoNormal>                userChoice: chosenAnswer,</p>
+
+<p class=MsoNormal>                correct: correctAnswer,</p>
+
+<p class=MsoNormal>                timestamp: new Date().toLocaleTimeString()</p>
+
+<p class=MsoNormal>            });</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function openResultsModal() {</p>
+
+<p class=MsoNormal>            playSound('click');</p>
+
+<p class=MsoNormal>            const container =
+document.getElementById('errorItemsContainer');</p>
+
+<p class=MsoNormal>            const notice =
+document.getElementById('noErrorsNotice');</p>
+
+<p class=MsoNormal>            container.innerHTML = '';</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            if (incorrectAnswersLog.length === 0) {</p>
+
+<p class=MsoNormal>                notice.classList.remove('hidden');</p>
+
+<p class=MsoNormal>            } else {</p>
+
+<p class=MsoNormal>                notice.classList.add('hidden');</p>
+
+<p class=MsoNormal>                incorrectAnswersLog.forEach((item, index)
+=&gt; {</p>
+
+<p class=MsoNormal>                    const card =
+document.createElement('div');</p>
+
+<p class=MsoNormal>                    card.className = &quot;bg-slate-950 p-3
+rounded-lg border border-red-900/60 space-y-1 text-slate-300&quot;;</p>
+
+<p class=MsoNormal>                    card.innerHTML = `</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;flex
+justify-between text-red-400 font-bold text-[11px]&quot;&gt;</p>
+
+<p class=MsoNormal>                            &lt;span&gt;[${item.stage}]
+Error #${index + 1}&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;span
+class=&quot;text-slate-500&quot;&gt;${item.timestamp}&lt;/span&gt;</p>
+
+<p class=MsoNormal>                        &lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;font-bold
+text-slate-200 text-sm&quot;&gt;${item.question}&lt;/div&gt;</p>
+
+<p class=MsoNormal>                        &lt;div class=&quot;text-slate-400
+flex flex-wrap gap-4 text-[11px] mt-1&quot;&gt;</p>
+
+<p class=MsoNormal>                            &lt;span&gt;Your Answer:
+&lt;strong
+class=&quot;text-red-400&quot;&gt;${item.userChoice}&lt;/strong&gt;&lt;/span&gt;</p>
+
+<p class=MsoNormal>                            &lt;span&gt;Correct Solution:
+&lt;strong
+class=&quot;text-emerald-400&quot;&gt;${item.correct}&lt;/strong&gt;&lt;/span&gt;</p>
+
+<p class=MsoNormal>                        &lt;/div&gt;</p>
+
+<p class=MsoNormal>                    `;</p>
+
+<p class=MsoNormal>                    container.appendChild(card);</p>
+
+<p class=MsoNormal>                });</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>           
+document.getElementById('resultsModal').classList.remove('hidden');</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function closeResultsModal() {</p>
+
+<p class=MsoNormal>            playSound('click');</p>
+
+<p class=MsoNormal>           
+document.getElementById('resultsModal').classList.add('hidden');</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function copyIncorrectAnswers() {</p>
+
+<p class=MsoNormal>            if (incorrectAnswersLog.length === 0) {</p>
+
+<p class=MsoNormal>                alert('No incorrect answers to copy!');</p>
+
+<p class=MsoNormal>                return;</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            let formattedText = &quot;BAFS DOJO BOMB DEFUSAL
+- INCORRECT ANSWERS REVIEW:\n\n&quot;;</p>
+
+<p class=MsoNormal>            incorrectAnswersLog.forEach((item, idx) =&gt; {</p>
+
+<p class=MsoNormal>                formattedText += `${idx + 1}.
+[${item.stage}] ${item.question}\n   - Your Answer: ${item.userChoice}\n   -
+Correct Solution: ${item.correct}\n\n`;</p>
+
+<p class=MsoNormal>            });</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            const textarea =
+document.createElement('textarea');</p>
+
+<p class=MsoNormal>            textarea.value = formattedText;</p>
+
+<p class=MsoNormal>            document.body.appendChild(textarea);</p>
+
+<p class=MsoNormal>            textarea.select();</p>
+
+<p class=MsoNormal>            try {</p>
+
+<p class=MsoNormal>                document.execCommand('copy');</p>
+
+<p class=MsoNormal>                const toast =
+document.getElementById('copyToast');</p>
+
+<p class=MsoNormal>                toast.classList.remove('hidden');</p>
+
+<p class=MsoNormal>                setTimeout(() =&gt;
+toast.classList.add('hidden'), 2000);</p>
+
+<p class=MsoNormal>            } catch (err) {</p>
+
+<p class=MsoNormal>                console.error('Copy failed', err);</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>            document.body.removeChild(textarea);</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function startMission() {</p>
+
+<p class=MsoNormal>            playSound('click');</p>
+
+<p class=MsoNormal>            startTimer();</p>
+
+<p class=MsoNormal>            switchStage(0);</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function switchStage(stageNum) {</p>
+
+<p class=MsoNormal>            playSound('click');</p>
+
+<p class=MsoNormal>            currentStage = stageNum;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            // If entering a playable stage (&gt; -1) and
+timer not running, start timer</p>
+
+<p class=MsoNormal>            if (stageNum &gt;= 0 &amp;&amp; !timerInterval)
+{</p>
+
+<p class=MsoNormal>                startTimer();</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            ['stageIntroView', 'stage0View', 'stage1View',
+'stage2View', 'stage3View', 'stage4View'].forEach((id, idx) =&gt; {</p>
+
+<p class=MsoNormal>                const el = document.getElementById(id);</p>
+
+<p class=MsoNormal>                if (el) el.classList.toggle('hidden', (idx -
+1) !== stageNum);</p>
+
+<p class=MsoNormal>            });</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            ['navStageIntro', 'navStage0', 'navStage1',
+'navStage2', 'navStage3', 'navStage4'].forEach((id, idx) =&gt; {</p>
+
+<p class=MsoNormal>                const btn = document.getElementById(id);</p>
+
+<p class=MsoNormal>                if (btn) {</p>
+
+<p class=MsoNormal>                    if ((idx - 1) === stageNum) {</p>
+
+<p class=MsoNormal>                        btn.className = &quot;px-2.5 py-1.5
+text-xs sm:text-sm font-semibold rounded-md transition-all flex items-center
+gap-1.5 bg-cyan-600 text-white shadow&quot;;</p>
+
+<p class=MsoNormal>                    } else {</p>
+
+<p class=MsoNormal>                        btn.className = &quot;px-2.5 py-1.5
+text-xs sm:text-sm font-semibold rounded-md transition-all flex items-center
+gap-1.5 text-slate-400 hover:text-white hover:bg-slate-800&quot;;</p>
+
+<p class=MsoNormal>                    }</p>
+
+<p class=MsoNormal>                }</p>
+
+<p class=MsoNormal>            });</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            updateProgress();</p>
+
+<p class=MsoNormal>            if (stageNum === 0) loadStage0Question();</p>
+
+<p class=MsoNormal>            if (stageNum === 1) loadStage1Question();</p>
+
+<p class=MsoNormal>            if (stageNum === 2) loadStage2Question();</p>
+
+<p class=MsoNormal>            if (stageNum === 3) {</p>
+
+<p class=MsoNormal>                loadStage3Question();</p>
+
+<p class=MsoNormal>                setTimeout(drawWires, 50);</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>            if (stageNum === 4) {</p>
+
+<p class=MsoNormal>                loadStage4Question();</p>
+
+<p class=MsoNormal>                setTimeout(drawWires4, 50);</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function loadStage0Question() {</p>
+
+<p class=MsoNormal>            if (s0Idx &lt; activeStage0Data.length) {</p>
+
+<p class=MsoNormal>               
+document.getElementById('s0QuestionText').textContent =
+activeStage0Data[s0Idx].text;</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function loadStage1Question() {</p>
+
+<p class=MsoNormal>            if (s1Idx &lt; activeStage1Data.length) {</p>
+
+<p class=MsoNormal>               
+document.getElementById('s1QuestionText').textContent =
+activeStage1Data[s1Idx].text;</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>            resetLeverVisual1();</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function loadStage2Question() {</p>
+
+<p class=MsoNormal>            if (s2Idx &lt; activeStage2Data.length) {</p>
+
+<p class=MsoNormal>               
+document.getElementById('s2QuestionText').textContent =
+activeStage2Data[s2Idx].text;</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function loadStage3Question() {</p>
+
+<p class=MsoNormal>            if (s3Idx &lt; activeStage3Data.length) {</p>
+
+<p class=MsoNormal>               
+document.getElementById('s3QuestionText').textContent =
+activeStage3Data[s3Idx].text;</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>            resetWirePath();</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function loadStage4Question() {</p>
+
+<p class=MsoNormal>            if (s4Idx &lt; activeStage4Data.length) {</p>
+
+<p class=MsoNormal>               
+document.getElementById('s4QuestionText').textContent =
+activeStage4Data[s4Idx].text;</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>            resetWirePath4();</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function snipWire(choice) {</p>
+
+<p class=MsoNormal>            playSound('snip');</p>
+
+<p class=MsoNormal>            const currentItem = activeStage0Data[s0Idx];</p>
+
+<p class=MsoNormal>            if (choice === currentItem.target) {</p>
+
+<p class=MsoNormal>                playSound('correct');</p>
+
+<p class=MsoNormal>                addScore(50);</p>
+
+<p class=MsoNormal>                s0Idx++;</p>
+
+<p class=MsoNormal>                if (s0Idx &gt;= activeStage0Data.length) {</p>
+
+<p class=MsoNormal>                    playSound('stageWin');</p>
+
+<p class=MsoNormal>                    setTimeout(() =&gt; switchStage(1),
+500);</p>
+
+<p class=MsoNormal>                } else {</p>
+
+<p class=MsoNormal>                    loadStage0Question();</p>
+
+<p class=MsoNormal>                }</p>
+
+<p class=MsoNormal>            } else {</p>
+
+<p class=MsoNormal>                playSound('error');</p>
+
+<p class=MsoNormal>                logError('Stage 0 Wire Cut',
+currentItem.text, choice, currentItem.target);</p>
+
+<p class=MsoNormal>                totalTimeSeconds = Math.max(0,
+totalTimeSeconds - 10);</p>
+
+<p class=MsoNormal>                const consoleEl =
+document.getElementById('bombConsole');</p>
+
+<p class=MsoNormal>                consoleEl.classList.add('shake');</p>
+
+<p class=MsoNormal>                setTimeout(() =&gt;
+consoleEl.classList.remove('shake'), 500);</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>            updateProgress();</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function triggerLever1(side) {</p>
+
+<p class=MsoNormal>            const handle =
+document.getElementById('leverHandle1');</p>
+
+<p class=MsoNormal>            if (side === 'Dr') {</p>
+
+<p class=MsoNormal>                handle.style.transform = 'translate(-120%,
+-50%)';</p>
+
+<p class=MsoNormal>            } else {</p>
+
+<p class=MsoNormal>                handle.style.transform = 'translate(20%,
+-50%)';</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>            setTimeout(() =&gt; checkStage1Answer(side),
+300);</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function resetLeverVisual1() {</p>
+
+<p class=MsoNormal>            const handle =
+document.getElementById('leverHandle1');</p>
+
+<p class=MsoNormal>            if (handle) handle.style.transform =
+'translate(-50%, -50%)';</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function checkStage1Answer(side) {</p>
+
+<p class=MsoNormal>            const currentItem = activeStage1Data[s1Idx];</p>
+
+<p class=MsoNormal>            if (side === currentItem.target) {</p>
+
+<p class=MsoNormal>                playSound('correct');</p>
+
+<p class=MsoNormal>                addScore(100);</p>
+
+<p class=MsoNormal>                s1Idx++;</p>
+
+<p class=MsoNormal>                if (s1Idx &gt;= activeStage1Data.length) {</p>
+
+<p class=MsoNormal>                    playSound('stageWin');</p>
+
+<p class=MsoNormal>                    setTimeout(() =&gt; switchStage(2),
+500);</p>
+
+<p class=MsoNormal>                } else {</p>
+
+<p class=MsoNormal>                    loadStage1Question();</p>
+
+<p class=MsoNormal>                }</p>
+
+<p class=MsoNormal>            } else {</p>
+
+<p class=MsoNormal>                playSound('error');</p>
+
+<p class=MsoNormal>                logError('Stage 1 CB Lever',
+currentItem.text, side, currentItem.target);</p>
+
+<p class=MsoNormal>                totalTimeSeconds = Math.max(0,
+totalTimeSeconds - 10);</p>
+
+<p class=MsoNormal>                const consoleEl =
+document.getElementById('bombConsole');</p>
+
+<p class=MsoNormal>                consoleEl.classList.add('shake');</p>
+
+<p class=MsoNormal>                setTimeout(() =&gt;
+consoleEl.classList.remove('shake'), 500);</p>
+
+<p class=MsoNormal>                resetLeverVisual1();</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>            updateProgress();</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function setS2Side(side) {</p>
+
+<p class=MsoNormal>            playSound('click');</p>
+
+<p class=MsoNormal>            s2SelectedSide = side;</p>
+
+<p class=MsoNormal>            document.getElementById('s2SideDr').className =
+side === 'Dr' ? 'flex-1 py-2 bg-blue-950 border border-blue-600 text-blue-300
+font-bold rounded-lg text-sm transition' : 'flex-1 py-2 bg-slate-900 border
+border-slate-700 text-slate-400 font-bold rounded-lg text-sm transition';</p>
+
+<p class=MsoNormal>            document.getElementById('s2SideCr').className =
+side === 'Cr' ? 'flex-1 py-2 bg-red-950 border border-red-600 text-red-300
+font-bold rounded-lg text-sm transition' : 'flex-1 py-2 bg-slate-900 border
+border-slate-700 text-slate-400 font-bold rounded-lg text-sm transition';</p>
+
+<p class=MsoNormal>           
+document.getElementById('s2StatusText').textContent = `${s2SelectedSide} x
+${s2SelectedPress}`;</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function setS2Press(multiplier) {</p>
+
+<p class=MsoNormal>            playSound('click');</p>
+
+<p class=MsoNormal>            s2SelectedPress = multiplier;</p>
+
+<p class=MsoNormal>            document.getElementById('s2Press1').className =
+multiplier === 1 ? 'flex-1 py-2 bg-emerald-950 border border-emerald-600
+text-emerald-300 font-bold rounded-lg text-sm transition' : 'flex-1 py-2
+bg-slate-900 border border-slate-700 text-slate-400 font-bold rounded-lg
+text-sm transition';</p>
+
+<p class=MsoNormal>            document.getElementById('s2Press2').className =
+multiplier === 2 ? 'flex-1 py-2 bg-purple-950 border border-purple-600
+text-purple-300 font-bold rounded-lg text-sm transition' : 'flex-1 py-2
+bg-slate-900 border border-slate-700 text-slate-400 font-bold rounded-lg
+text-sm transition';</p>
+
+<p class=MsoNormal>           
+document.getElementById('s2StatusText').textContent = `${s2SelectedSide} x
+${s2SelectedPress}`;</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function confirmS2Action() {</p>
+
+<p class=MsoNormal>            playSound('click');</p>
+
+<p class=MsoNormal>            const target = activeStage2Data[s2Idx];</p>
+
+<p class=MsoNormal>            if (s2SelectedSide === target.targetSide
+&amp;&amp; s2SelectedPress === target.targetPress) {</p>
+
+<p class=MsoNormal>                playSound('correct');</p>
+
+<p class=MsoNormal>                addScore(150);</p>
+
+<p class=MsoNormal>                s2Idx++;</p>
+
+<p class=MsoNormal>                if (s2Idx &gt;= activeStage2Data.length) {</p>
+
+<p class=MsoNormal>                    playSound('stageWin');</p>
+
+<p class=MsoNormal>                    setTimeout(() =&gt; switchStage(3),
+500);</p>
+
+<p class=MsoNormal>                } else {</p>
+
+<p class=MsoNormal>                    loadStage2Question();</p>
+
+<p class=MsoNormal>                }</p>
+
+<p class=MsoNormal>            } else {</p>
+
+<p class=MsoNormal>                playSound('error');</p>
+
+<p class=MsoNormal>                logError('Stage 2 CB Error', target.text,
+`${s2SelectedSide} x ${s2SelectedPress}`, `${target.targetSide} x
+${target.targetPress}`);</p>
+
+<p class=MsoNormal>                totalTimeSeconds = Math.max(0,
+totalTimeSeconds - 10);</p>
+
+<p class=MsoNormal>                const consoleEl =
+document.getElementById('bombConsole');</p>
+
+<p class=MsoNormal>                consoleEl.classList.add('shake');</p>
+
+<p class=MsoNormal>                setTimeout(() =&gt;
+consoleEl.classList.remove('shake'), 500);</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>            updateProgress();</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        // STAGE 3 WIRE CIRCUIT LOGIC</p>
+
+<p class=MsoNormal>        function handleTerminalClick(num) {</p>
+
+<p class=MsoNormal>            playSound('click');</p>
+
+<p class=MsoNormal>            if (s3CurrentWirePath.includes(num)) return;</p>
+
+<p class=MsoNormal>            s3CurrentWirePath.push(num);</p>
+
+<p class=MsoNormal>            const btn =
+document.getElementById(`term-${num}`);</p>
+
+<p class=MsoNormal>            if (btn) btn.classList.add('selected');</p>
+
+<p class=MsoNormal>           
+document.getElementById('wirePathDisplay').textContent =
+s3CurrentWirePath.join(' -&gt; ');</p>
+
+<p class=MsoNormal>            drawWires();</p>
+
+<p class=MsoNormal>            if (s3CurrentWirePath.length === 3) {</p>
+
+<p class=MsoNormal>                setTimeout(checkStage3Route, 300);</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function autoConnectRoute(pathArray) {</p>
+
+<p class=MsoNormal>            resetWirePath();</p>
+
+<p class=MsoNormal>            pathArray.forEach(num =&gt;
+handleTerminalClick(num));</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function resetWirePath() {</p>
+
+<p class=MsoNormal>            s3CurrentWirePath = [];</p>
+
+<p class=MsoNormal>            for (let i = 1; i &lt;= 9; i++) {</p>
+
+<p class=MsoNormal>                const btn =
+document.getElementById(`term-${i}`);</p>
+
+<p class=MsoNormal>                if (btn) btn.classList.remove('selected');</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>           
+document.getElementById('wirePathDisplay').textContent = '[ NONE ]';</p>
+
+<p class=MsoNormal>            drawWires();</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function drawWires() {</p>
+
+<p class=MsoNormal>            const svg =
+document.getElementById('wireCanvas');</p>
+
+<p class=MsoNormal>            if (!svg) return;</p>
+
+<p class=MsoNormal>            svg.innerHTML = `</p>
+
+<p class=MsoNormal>                &lt;defs&gt;</p>
+
+<p class=MsoNormal>                    &lt;filter id=&quot;glow&quot;
+x=&quot;-20%&quot; y=&quot;-20%&quot; width=&quot;140%&quot;
+height=&quot;140%&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;feGaussianBlur
+stdDeviation=&quot;3&quot; result=&quot;blur&quot; /&gt;</p>
+
+<p class=MsoNormal>                        &lt;feComposite
+in=&quot;SourceGraphic&quot; in2=&quot;blur&quot; operator=&quot;over&quot;
+/&gt;</p>
+
+<p class=MsoNormal>                    &lt;/filter&gt;</p>
+
+<p class=MsoNormal>                &lt;/defs&gt;</p>
+
+<p class=MsoNormal>            `;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            if (s3CurrentWirePath.length &lt; 2) return;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            const svgRect = svg.getBoundingClientRect();</p>
+
+<p class=MsoNormal>            for (let i = 0; i &lt; s3CurrentWirePath.length
+- 1; i++) {</p>
+
+<p class=MsoNormal>                const btn1 =
+document.getElementById(`term-${s3CurrentWirePath[i]}`);</p>
+
+<p class=MsoNormal>                const btn2 =
+document.getElementById(`term-${s3CurrentWirePath[i+1]}`);</p>
+
+<p class=MsoNormal>                if (btn1 &amp;&amp; btn2) {</p>
+
+<p class=MsoNormal>                    const r1 = btn1.getBoundingClientRect();</p>
+
+<p class=MsoNormal>                    const r2 = btn2.getBoundingClientRect();</p>
+
+<p class=MsoNormal>                    const x1 = r1.left + r1.width / 2 -
+svgRect.left;</p>
+
+<p class=MsoNormal>                    const y1 = r1.top + r1.height / 2 -
+svgRect.top;</p>
+
+<p class=MsoNormal>                    const x2 = r2.left + r2.width / 2 -
+svgRect.left;</p>
+
+<p class=MsoNormal>                    const y2 = r2.top + r2.height / 2 -
+svgRect.top;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                    const line =
+document.createElementNS('http://www.w3.org/2000/svg', 'line');</p>
+
+<p class=MsoNormal>                    line.setAttribute('x1', x1);</p>
+
+<p class=MsoNormal>                    line.setAttribute('y1', y1);</p>
+
+<p class=MsoNormal>                    line.setAttribute('x2', x2);</p>
+
+<p class=MsoNormal>                    line.setAttribute('y2', y2);</p>
+
+<p class=MsoNormal>                    line.setAttribute('stroke', '#38bdf8');</p>
+
+<p class=MsoNormal>                    line.setAttribute('stroke-width', '4');</p>
+
+<p class=MsoNormal>                    line.setAttribute('filter',
+'url(#glow)');</p>
+
+<p class=MsoNormal>                    svg.appendChild(line);</p>
+
+<p class=MsoNormal>                }</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function checkStage3Route() {</p>
+
+<p class=MsoNormal>            const currentItem = activeStage3Data[s3Idx];</p>
+
+<p class=MsoNormal>            const routeStr = s3CurrentWirePath.join('-');</p>
+
+<p class=MsoNormal>            </p>
+
+<p class=MsoNormal>            let isCorrect = false;</p>
+
+<p class=MsoNormal>            if (currentItem.target === '&gt;' &amp;&amp;
+routeStr === '1-6-7') isCorrect = true;</p>
+
+<p class=MsoNormal>            if (currentItem.target === '&lt;' &amp;&amp;
+routeStr === '3-4-9') isCorrect = true;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            if (isCorrect) {</p>
+
+<p class=MsoNormal>                playSound('correct');</p>
+
+<p class=MsoNormal>                addScore(200);</p>
+
+<p class=MsoNormal>                s3Idx++;</p>
+
+<p class=MsoNormal>                if (s3Idx &gt;= activeStage3Data.length) {</p>
+
+<p class=MsoNormal>                    playSound('stageWin');</p>
+
+<p class=MsoNormal>                    setTimeout(() =&gt; switchStage(4),
+500);</p>
+
+<p class=MsoNormal>                } else {</p>
+
+<p class=MsoNormal>                    loadStage3Question();</p>
+
+<p class=MsoNormal>                }</p>
+
+<p class=MsoNormal>            } else {</p>
+
+<p class=MsoNormal>                playSound('error');</p>
+
+<p class=MsoNormal>                logError('Stage 3 Bank Rec',
+currentItem.text, routeStr, currentItem.target === '&gt;' ? '1-6-7 (CB &gt;
+BS)' : '3-4-9 (CB &lt; BS)');</p>
+
+<p class=MsoNormal>                totalTimeSeconds = Math.max(0,
+totalTimeSeconds - 10);</p>
+
+<p class=MsoNormal>                const consoleEl =
+document.getElementById('bombConsole');</p>
+
+<p class=MsoNormal>                consoleEl.classList.add('shake');</p>
+
+<p class=MsoNormal>                setTimeout(() =&gt;
+consoleEl.classList.remove('shake'), 500);</p>
+
+<p class=MsoNormal>                resetWirePath();</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>            updateProgress();</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        // STAGE 4 WIRE CIRCUIT LOGIC</p>
+
+<p class=MsoNormal>        function handleTerminalClick4(num) {</p>
+
+<p class=MsoNormal>            playSound('click');</p>
+
+<p class=MsoNormal>            if (s4CurrentWirePath.includes(num)) return;</p>
+
+<p class=MsoNormal>            s4CurrentWirePath.push(num);</p>
+
+<p class=MsoNormal>            const btn =
+document.getElementById(`term4-${num}`);</p>
+
+<p class=MsoNormal>            if (btn) btn.classList.add('selected');</p>
+
+<p class=MsoNormal>           
+document.getElementById('wirePathDisplay4').textContent =
+s4CurrentWirePath.join(' -&gt; ');</p>
+
+<p class=MsoNormal>            drawWires4();</p>
+
+<p class=MsoNormal>            if (s4CurrentWirePath.length === 3) {</p>
+
+<p class=MsoNormal>                setTimeout(checkStage4Route, 300);</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function autoConnectRoute4(pathArray) {</p>
+
+<p class=MsoNormal>            resetWirePath4();</p>
+
+<p class=MsoNormal>            pathArray.forEach(num =&gt;
+handleTerminalClick4(num));</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function resetWirePath4() {</p>
+
+<p class=MsoNormal>            s4CurrentWirePath = [];</p>
+
+<p class=MsoNormal>            for (let i = 1; i &lt;= 9; i++) {</p>
+
+<p class=MsoNormal>                const btn =
+document.getElementById(`term4-${i}`);</p>
+
+<p class=MsoNormal>                if (btn) btn.classList.remove('selected');</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>           
+document.getElementById('wirePathDisplay4').textContent = '[ NONE ]';</p>
+
+<p class=MsoNormal>            drawWires4();</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function drawWires4() {</p>
+
+<p class=MsoNormal>            const svg =
+document.getElementById('wireCanvas4');</p>
+
+<p class=MsoNormal>            if (!svg) return;</p>
+
+<p class=MsoNormal>            svg.innerHTML = `</p>
+
+<p class=MsoNormal>                &lt;defs&gt;</p>
+
+<p class=MsoNormal>                    &lt;filter id=&quot;glow4&quot;
+x=&quot;-20%&quot; y=&quot;-20%&quot; width=&quot;140%&quot;
+height=&quot;140%&quot;&gt;</p>
+
+<p class=MsoNormal>                        &lt;feGaussianBlur
+stdDeviation=&quot;3&quot; result=&quot;blur&quot; /&gt;</p>
+
+<p class=MsoNormal>                        &lt;feComposite
+in=&quot;SourceGraphic&quot; in2=&quot;blur&quot; operator=&quot;over&quot;
+/&gt;</p>
+
+<p class=MsoNormal>                    &lt;/filter&gt;</p>
+
+<p class=MsoNormal>                &lt;/defs&gt;</p>
+
+<p class=MsoNormal>            `;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            if (s4CurrentWirePath.length &lt; 2) return;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            const svgRect = svg.getBoundingClientRect();</p>
+
+<p class=MsoNormal>            for (let i = 0; i &lt; s4CurrentWirePath.length
+- 1; i++) {</p>
+
+<p class=MsoNormal>                const btn1 =
+document.getElementById(`term4-${s4CurrentWirePath[i]}`);</p>
+
+<p class=MsoNormal>                const btn2 =
+document.getElementById(`term4-${s4CurrentWirePath[i+1]}`);</p>
+
+<p class=MsoNormal>                if (btn1 &amp;&amp; btn2) {</p>
+
+<p class=MsoNormal>                    const r1 = btn1.getBoundingClientRect();</p>
+
+<p class=MsoNormal>                    const r2 = btn2.getBoundingClientRect();</p>
+
+<p class=MsoNormal>                    const x1 = r1.left + r1.width / 2 -
+svgRect.left;</p>
+
+<p class=MsoNormal>                    const y1 = r1.top + r1.height / 2 -
+svgRect.top;</p>
+
+<p class=MsoNormal>                    const x2 = r2.left + r2.width / 2 -
+svgRect.left;</p>
+
+<p class=MsoNormal>                    const y2 = r2.top + r2.height / 2 -
+svgRect.top;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>                    const line =
+document.createElementNS('http://www.w3.org/2000/svg', 'line');</p>
+
+<p class=MsoNormal>                    line.setAttribute('x1', x1);</p>
+
+<p class=MsoNormal>                    line.setAttribute('y1', y1);</p>
+
+<p class=MsoNormal>                    line.setAttribute('x2', x2);</p>
+
+<p class=MsoNormal>                    line.setAttribute('y2', y2);</p>
+
+<p class=MsoNormal>                    line.setAttribute('stroke', '#a855f7');</p>
+
+<p class=MsoNormal>                    line.setAttribute('stroke-width', '4');</p>
+
+<p class=MsoNormal>                    line.setAttribute('filter',
+'url(#glow4)');</p>
+
+<p class=MsoNormal>                    svg.appendChild(line);</p>
+
+<p class=MsoNormal>                }</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function checkStage4Route() {</p>
+
+<p class=MsoNormal>            const currentItem = activeStage4Data[s4Idx];</p>
+
+<p class=MsoNormal>            const routeStr = s4CurrentWirePath.join('-');</p>
+
+<p class=MsoNormal>            </p>
+
+<p class=MsoNormal>            let isCorrect = false;</p>
+
+<p class=MsoNormal>            if (currentItem.target === '&gt;' &amp;&amp;
+routeStr === '1-6-7') isCorrect = true;</p>
+
+<p class=MsoNormal>            if (currentItem.target === '&lt;' &amp;&amp;
+routeStr === '3-4-9') isCorrect = true;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>            if (isCorrect) {</p>
+
+<p class=MsoNormal>                playSound('correct');</p>
+
+<p class=MsoNormal>                addScore(250);</p>
+
+<p class=MsoNormal>                s4Idx++;</p>
+
+<p class=MsoNormal>                if (s4Idx &gt;= activeStage4Data.length) {</p>
+
+<p class=MsoNormal>                    playSound('stageWin');</p>
+
+<p class=MsoNormal>                    openResultsModal();</p>
+
+<p class=MsoNormal>                } else {</p>
+
+<p class=MsoNormal>                    loadStage4Question();</p>
+
+<p class=MsoNormal>                }</p>
+
+<p class=MsoNormal>            } else {</p>
+
+<p class=MsoNormal>                playSound('error');</p>
+
+<p class=MsoNormal>                logError('Stage 4 Unadjusted BRS',
+currentItem.text, routeStr, currentItem.target === '&gt;' ? '1-6-7 (CB &gt;
+BS)' : '3-4-9 (CB &lt; BS)');</p>
+
+<p class=MsoNormal>                totalTimeSeconds = Math.max(0,
+totalTimeSeconds - 10);</p>
+
+<p class=MsoNormal>                const consoleEl =
+document.getElementById('bombConsole');</p>
+
+<p class=MsoNormal>                consoleEl.classList.add('shake');</p>
+
+<p class=MsoNormal>                setTimeout(() =&gt;
+consoleEl.classList.remove('shake'), 500);</p>
+
+<p class=MsoNormal>                resetWirePath4();</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>            updateProgress();</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function addScore(pts) {</p>
+
+<p class=MsoNormal>            score += pts;</p>
+
+<p class=MsoNormal>           
+document.getElementById('scoreDisplay').textContent = String(score).padStart(4,
+'0');</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function updateProgress() {</p>
+
+<p class=MsoNormal>            let totalItems = 0, currentProgress = 0,
+titleText = &quot;STAGE PROGRESS&quot;;</p>
+
+<p class=MsoNormal>            if (currentStage === 0) {</p>
+
+<p class=MsoNormal>                totalItems = activeStage0Data.length;</p>
+
+<p class=MsoNormal>                currentProgress = s0Idx;</p>
+
+<p class=MsoNormal>                titleText = &quot;STAGE 0: WIRE
+CUTTING&quot;;</p>
+
+<p class=MsoNormal>            } else if (currentStage === 1) {</p>
+
+<p class=MsoNormal>                totalItems = activeStage1Data.length;</p>
+
+<p class=MsoNormal>                currentProgress = s1Idx;</p>
+
+<p class=MsoNormal>                titleText = &quot;STAGE 1: CASH BOOK
+LEVER&quot;;</p>
+
+<p class=MsoNormal>            } else if (currentStage === 2) {</p>
+
+<p class=MsoNormal>                totalItems = activeStage2Data.length;</p>
+
+<p class=MsoNormal>                currentProgress = s2Idx;</p>
+
+<p class=MsoNormal>                titleText = &quot;STAGE 2: ERROR
+CORRECTION&quot;;</p>
+
+<p class=MsoNormal>            } else if (currentStage === 3) {</p>
+
+<p class=MsoNormal>                totalItems = activeStage3Data.length;</p>
+
+<p class=MsoNormal>                currentProgress = s3Idx;</p>
+
+<p class=MsoNormal>                titleText = &quot;STAGE 3: BRS
+CIRCUITS&quot;;</p>
+
+<p class=MsoNormal>            } else if (currentStage === 4) {</p>
+
+<p class=MsoNormal>                totalItems = activeStage4Data.length;</p>
+
+<p class=MsoNormal>                currentProgress = s4Idx;</p>
+
+<p class=MsoNormal>                titleText = &quot;STAGE 4: UNADJUSTED
+BRS&quot;;</p>
+
+<p class=MsoNormal>            } else {</p>
+
+<p class=MsoNormal>                titleText = &quot;START PAGE&quot;;</p>
+
+<p class=MsoNormal>                totalItems = 1;</p>
+
+<p class=MsoNormal>                currentProgress = 0;</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>           
+document.getElementById('stageTitleProgress').textContent = titleText;</p>
+
+<p class=MsoNormal>           
+document.getElementById('progressText').textContent = `${currentProgress} /
+${totalItems}`;</p>
+
+<p class=MsoNormal>            const pct = Math.round((currentProgress /
+Math.max(totalItems, 1)) * 100);</p>
+
+<p class=MsoNormal>           
+document.getElementById('progressBar').style.width = `${pct}%`;</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function startTimer() {</p>
+
+<p class=MsoNormal>            if (timerInterval) clearInterval(timerInterval);</p>
+
+<p class=MsoNormal>            timerInterval = setInterval(() =&gt; {</p>
+
+<p class=MsoNormal>                if (totalTimeSeconds &lt;= 0) {</p>
+
+<p class=MsoNormal>                    clearInterval(timerInterval);</p>
+
+<p class=MsoNormal>                   
+document.getElementById('timerDisplay').textContent = &quot;00:00.00&quot;;</p>
+
+<p class=MsoNormal>                    playSound('error');</p>
+
+<p class=MsoNormal>                    alert(&quot;<span style='font-family:
+"Apple Color Emoji"'>&#128165;</span> BOOM! The detonation timer reached 0.
+Click Reset to retry.&quot;);</p>
+
+<p class=MsoNormal>                    return;</p>
+
+<p class=MsoNormal>                }</p>
+
+<p class=MsoNormal>                totalTimeSeconds -= 0.1;</p>
+
+<p class=MsoNormal>                const m = Math.floor(totalTimeSeconds / 60);</p>
+
+<p class=MsoNormal>                const s = Math.floor(totalTimeSeconds % 60);</p>
+
+<p class=MsoNormal>                const ms = Math.floor((totalTimeSeconds % 1)
+* 100);</p>
+
+<p class=MsoNormal>               
+document.getElementById('timerDisplay').textContent = </p>
+
+<p class=MsoNormal>                    `${String(m).padStart(2,
+'0')}:${String(s).padStart(2, '0')}.${String(ms).padStart(2, '0')}`;</p>
+
+<p class=MsoNormal>            }, 100);</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        function restartGame() {</p>
+
+<p class=MsoNormal>            if (timerInterval) {</p>
+
+<p class=MsoNormal>                clearInterval(timerInterval);</p>
+
+<p class=MsoNormal>                timerInterval = null;</p>
+
+<p class=MsoNormal>            }</p>
+
+<p class=MsoNormal>            s0Idx = 0; s1Idx = 0; s2Idx = 0; s3Idx = 0;
+s4Idx = 0;</p>
+
+<p class=MsoNormal>            score = 0;</p>
+
+<p class=MsoNormal>            totalTimeSeconds = 900;</p>
+
+<p class=MsoNormal>           
+document.getElementById('timerDisplay').textContent = &quot;15:00.00&quot;;</p>
+
+<p class=MsoNormal>            incorrectAnswersLog = [];</p>
+
+<p class=MsoNormal>            randomizeAllStageQuestions();</p>
+
+<p class=MsoNormal>           
+document.getElementById('scoreDisplay').textContent = '0000';</p>
+
+<p class=MsoNormal>            switchStage(-1);</p>
+
+<p class=MsoNormal>        }</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>        window.onload = function() {</p>
+
+<p class=MsoNormal>            randomizeAllStageQuestions();</p>
+
+<p class=MsoNormal>           
+document.getElementById('timerDisplay').textContent = &quot;15:00.00&quot;;</p>
+
+<p class=MsoNormal>            window.addEventListener('resize', () =&gt; {</p>
+
+<p class=MsoNormal>                if (currentStage === 3) drawWires();</p>
+
+<p class=MsoNormal>                if (currentStage === 4) drawWires4();</p>
+
+<p class=MsoNormal>            });</p>
+
+<p class=MsoNormal>        };</p>
+
+<p class=MsoNormal>    &lt;/script&gt;</p>
+
+<p class=MsoNormal>&lt;/body&gt;</p>
+
+<p class=MsoNormal>&lt;/html&gt;</p>
+
+</div>
+
+</body>
+
+</html>
