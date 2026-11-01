@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAFS DOJO - Bomb Defusal Accounting Game</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        digital: ['VT323', 'monospace'],
+                        tech: ['Chakra Petch', 'sans-serif'],
+                        'mono-tech': ['Share Tech Mono', 'monospace']
+                    },
+                    colors: {
+                        bomb: {
+                            base: '#0f172a',
+                            panel: '#1e293b',
+                            gold: '#f59e0b',
+                            wireBlue: '#2563eb',
+                            wireRed: '#dc2626'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #020617;
+            color: #f8fafc;
+            font-family: 'Chakra Petch', sans-serif;
+            user-select: none;
+        }
+
+        /* Screen Glow & Metal Textures */
+        .metal-panel {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 20px 25px -5px rgba(0, 0, 0, 0.7);
+            border: 1px solid #334155;
+        }
+
+        .screen-glow {
+            box-shadow: inset 0 0 15px rgba(6, 182, 212, 0.15), 0 0 10px rgba(6, 182, 212, 0.1);
+        }
+
+        .circuit-bg {
+            background-color: #051329;
+            background-image: 
+                radial-gradient(#1e3a8a 0.75px, transparent 0.75px), 
+                radial-gradient(#1e3a8a 0.75px, #051329 0.75px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+        }
+
+        .lever-track {
+            background: linear-gradient(180deg, #020617 0%, #1e293b 50%, #020617 100%);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .lever-handle {
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .lever-knob {
+            background: radial-gradient(circle at 30% 30%, #ef4444, #991b1b);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.4);
+        }
+
+        .led-pulse {
+            animation: pulse-glow 1.5s infinite alternate;
+        }
+        @keyframes pulse-glow {
+            0% { opacity: 0.4; box-shadow: 0 0 2px #ef4444; }
+            100% { opacity: 1; box-shadow: 0 0 12px #ef4444, 0 0 20px #ef4444; }
+        }
+
+        .terminal-btn {
+            transition: all 0.15s ease;
+        }
+        .terminal-btn:active {
+            transform: scale(0.95);
+        }
+        .terminal-btn.selected {
+            box-shadow: 0 0 12px #3b82f6, inset 0 0 8px #3b82f6;
+            border-color: #60a5fa;
+        }
+
+        #wireCanvas, #wireCanvas4, #wireCanvas5 {
+            pointer-events: none;
+        }
+
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #111827; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between items-center p-2 sm:p-4 bg-slate-950">
+
+    <!-- TOP HEADER -->
+    <header class="w-full max-w-5xl flex flex-wrap justify-between items-center bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 mb-3 shadow-lg">
+        <div class="flex items-center space-x-3">
+            <div class="p-2 bg-red-600/20 border border-red-500/40 rounded-lg text-red-500 cursor-pointer" onclick="switchStage(-1)" title="Intro / Instructions">
+                <i class="fa-solid fa-bomb text-2xl animate-bounce"></i>
+            </div>
+            <div>
+                <h1 class="text-xl sm:text-2xl font-black tracking-wider text-slate-100 font-digital flex items-center gap-2">
+                    BAFS DOJO <span class="text-xs font-semibold px-2 py-0.5 bg-red-950 border border-red-700 text-red-400 rounded">DEFUSAL v3.0</span>
+                </h1>
+                <p class="text-xs text-slate-400 font-mono-tech">Cash Book Adjustments & Bank Reconciliation Module</p>
+            </div>
+        </div>
+
+        <!-- STAGE SELECTOR TABS & EXIT BUTTON -->
+        <div class="flex items-center gap-1 sm:gap-2 mt-2 sm:mt-0 bg-slate-950 p-1.5 rounded-lg border border-slate-800 flex-wrap">
+            <button id="navStageIntro" onclick="switchStage(-1)" class="px-2.5 py-1.5 text-xs sm:text-sm font-semibold rounded-md transition-all flex items-center gap-1.5 bg-emerald-600 text-white shadow">
+                <i class="fa-solid fa-house"></i> Start
+            </button>
+            <button id="navStage0" onclick="switchStage(0)" class="px-2.5 py-1.5 text-xs sm:text-sm font-semibold rounded-md transition-all flex items-center gap-1.5 text-slate-400 hover:text-white hover:bg-slate-800">
+                <i class="fa-solid fa-scissors"></i> Stage 0
+            </button>
+            <button id="navStage1" onclick="switchStage(1)" class="px-2.5 py-1.5 text-xs sm:text-sm font-semibold rounded-md transition-all flex items-center gap-1.5 text-slate-400 hover:text-white hover:bg-slate-800">
+                <i class="fa-solid fa-scale-balanced"></i> Stage 1
+            </button>
+            <button id="navStage2" onclick="switchStage(2)" class="px-2.5 py-1.5 text-xs sm:text-sm font-semibold rounded-md transition-all flex items-center gap-1.5 text-slate-400 hover:text-white hover:bg-slate-800">
+                <i class="fa-solid fa-triangle-exclamation"></i> Stage 2
+            </button>
+            <button id="navStage3" onclick="switchStage(3)" class="px-2.5 py-1.5 text-xs sm:text-sm font-semibold rounded-md transition-all flex items-center gap-1.5 text-slate-400 hover:text-white hover:bg-slate-800">
+                <i class="fa-solid fa-network-wired"></i> Stage 3
+            </button>
+            <button id="navStage4" onclick="switchStage(4)" class="px-2.5 py-1.5 text-xs sm:text-sm font-semibold rounded-md transition-all flex items-center gap-1.5 text-slate-400 hover:text-white hover:bg-slate-800">
+                <i class="fa-solid fa-file-invoice-dollar"></i> Stage 4
+            </button>
+            <button id="navStage5" onclick="switchStage(5)" class="px-2.5 py-1.5 text-xs sm:text-sm font-semibold rounded-md transition-all flex items-center gap-1.5 text-slate-400 hover:text-white hover:bg-slate-800">
+                <i class="fa-solid fa-book"></i> Stage 5
+            </button>
+
+            <!-- GREEN EXIT SIGN BUTTON FOR RESULTS -->
+            <button onclick="openResultsModal()" class="ml-2 px-2.5 py-1 bg-emerald-700 hover:bg-emerald-600 border border-emerald-400 text-white rounded-md transition-all flex items-center gap-1.5 shadow-md font-mono-tech text-xs" title="Exit / View Results">
+                <!-- SVG Emergency Exit Icon -->
+                <svg class="w-5 h-5 fill-current text-white" viewBox="0 0 24 24">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v3l-5-4 5-4v3h4v2z"/>
+                </svg>
+                <span>EXIT</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- BOMB CONSOLE CONTAINER -->
+    <main id="bombConsole" class="w-full max-w-5xl metal-panel rounded-2xl p-3 sm:p-6 relative overflow-hidden flex flex-col gap-6">
+
+        <!-- TOP STATUS DISPLAY: STAGE INDICATOR & DIGITAL TICKING TIMER -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center bg-slate-950/80 p-4 rounded-xl border border-slate-800 bezel">
+            
+            <!-- LED Lights & Stage Progress -->
+            <div class="md:col-span-4 flex items-center space-x-4">
+                <div class="flex flex-col items-center">
+                    <span class="text-[10px] font-mono-tech text-slate-400 uppercase tracking-widest mb-1">ARMED</span>
+                    <div id="statusLed" class="w-5 h-5 rounded-full bg-red-600 led-pulse"></div>
+                </div>
+                <div class="flex-1">
+                    <div class="flex justify-between text-xs font-mono-tech mb-1">
+                        <span class="text-slate-400" id="stageTitleProgress">STAGE 0 PROGRESS</span>
+                        <span id="progressText" class="text-amber-400 font-bold">0 / 22 WIRES</span>
+                    </div>
+                    <div class="w-full bg-slate-800 rounded-full h-3 p-0.5 border border-slate-700">
+                        <div id="progressBar" class="bg-gradient-to-r from-amber-500 to-emerald-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Digital Countdown Screen (15:00 Defusal Timer) -->
+            <div class="md:col-span-5 flex justify-center">
+                <div class="bg-black border-2 border-slate-800 rounded-lg px-6 py-2 shadow-inner text-center flex flex-col items-center min-w-[200px]">
+                    <span class="text-[10px] font-mono-tech text-red-500/80 tracking-widest uppercase">DETONATION COUNTDOWN</span>
+                    <div id="timerDisplay" class="text-4xl sm:text-5xl font-digital text-red-500 tracking-wider font-extrabold drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]">
+                        15:00.00
+                    </div>
+                </div>
+            </div>
+
+            <!-- Score & Controls -->
+            <div class="md:col-span-3 flex justify-between md:justify-end items-center gap-3">
+                <div class="text-right">
+                    <div class="text-[10px] font-mono-tech text-slate-400">DEFUSE SCORE</div>
+                    <div id="scoreDisplay" class="text-xl font-digital text-emerald-400 font-bold">0000</div>
+                </div>
+                <button onclick="toggleAudioMute()" id="muteBtn" class="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition" title="Toggle Sound">
+                    <i class="fa-solid fa-volume-high" id="muteIcon"></i>
+                </button>
+                <button onclick="restartGame()" class="p-2.5 bg-red-950 hover:bg-red-900 border border-red-700 text-red-200 rounded-lg transition font-mono-tech text-xs flex items-center gap-1">
+                    <i class="fa-solid fa-rotate-right"></i> RESET
+                </button>
+            </div>
+        </div>
+
+        <!-- MAIN INTERACTIVE STAGE AREA -->
+
+        <!-- ================= STAGE -1: INTRODUCTION & BOMB LANDING PAGE ================= -->
+        <div id="stageIntroView" class="space-y-6">
+            <div class="bg-slate-900/90 border-2 border-red-500/50 rounded-2xl p-6 text-center shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-600 via-amber-500 to-red-600"></div>
+                
+                <!-- Animated Big Bomb Artwork -->
+                <div class="flex justify-center my-4">
+                    <div class="relative w-40 h-40 flex items-center justify-center">
+                        <div class="absolute -top-6 right-6 w-12 h-12">
+                            <div class="w-1.5 h-10 bg-amber-700 rounded-full mx-auto transform -rotate-12"></div>
+                            <div class="w-4 h-4 bg-yellow-400 rounded-full animate-ping absolute -top-1 left-3 opacity-75"></div>
+                            <div class="w-3 h-3 bg-red-500 rounded-full absolute -top-0.5 left-3.5"></div>
+                        </div>
+                        <div class="w-32 h-32 bg-gradient-to-br from-slate-800 via-slate-950 to-black rounded-full border-4 border-slate-700 shadow-[0_0_30px_rgba(239,68,68,0.3)] flex items-center justify-center relative">
+                            <i class="fa-solid fa-bomb text-6xl text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]"></i>
+                            <div class="absolute bottom-4 font-digital text-red-500 text-xs font-bold animate-pulse">15:00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="text-2xl sm:text-3xl font-black font-digital text-red-500 tracking-wide mb-2">
+                    WELCOME TO BAFS DOJO BOMB DEFUSAL
+                </h2>
+                <p class="text-slate-300 font-mono-tech text-sm max-w-2xl mx-auto mb-6">
+                    A high-stakes accounting simulator designed for HKDSE BAFS Cash Book adjustments and Bank Reconciliation Statement practice. Defuse the bomb before the 15-minute detonation timer reaches zero!
+                </p>
+
+                <!-- Mission Rules Summary -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-left max-w-3xl mx-auto mb-6 font-mono-tech text-xs">
+                    <div class="bg-slate-950 p-3 rounded-xl border border-cyan-900/60">
+                        <div class="text-cyan-400 font-bold mb-1"><i class="fa-solid fa-scissors"></i> Stage 0: Wire Cutting</div>
+                        <p class="text-slate-400">Determine whether adjustments belong in the <strong class="text-blue-400">Cash Book (CB)</strong> or <strong class="text-red-400">Bank Rec Statement (BRS)</strong>.</p>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-emerald-900/60">
+                        <div class="text-emerald-400 font-bold mb-1"><i class="fa-solid fa-scale-balanced"></i> Stage 1: CB Lever</div>
+                        <p class="text-slate-400">Move the red-knob lever to <strong class="text-blue-400">Left (Dr.)</strong> or <strong class="text-red-400">Right (Cr.)</strong> for cash book items.</p>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-amber-900/60">
+                        <div class="text-amber-400 font-bold mb-1"><i class="fa-solid fa-triangle-exclamation"></i> Stage 2: CB Errors</div>
+                        <p class="text-slate-400">Correct cash book errors using <strong class="text-emerald-400">1x press</strong> or wrong-side reversals with <strong class="text-purple-400">2x press</strong>.</p>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-blue-900/60">
+                        <div class="text-blue-400 font-bold mb-1"><i class="fa-solid fa-network-wired"></i> Stages 3 & 4: Wire Circuits</div>
+                        <p class="text-slate-400">Route terminals between CB and BS: <strong class="text-emerald-400">1-6-7</strong> for CB &gt; BS or <strong class="text-amber-400">3-4-9</strong> for CB &lt; BS.</p>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-fuchsia-900/60">
+                        <div class="text-fuchsia-400 font-bold mb-1"><i class="fa-solid fa-book"></i> Stage 5: BS → Unadj. CB</div>
+                        <p class="text-slate-400">Reconcile Bank Statement items to the <strong class="text-fuchsia-300">unadjusted Cash Book</strong> balance using the same circuit routes.</p>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-red-900/60 sm:col-span-2 md:col-span-3 flex items-center justify-between">
+                        <div>
+                            <div class="text-red-400 font-bold"><i class="fa-solid fa-clock"></i> 15-Minute Defusal Clock</div>
+                            <p class="text-slate-400">Wrong answers incur a 10-second penalty! Time out = explosion. Click the GREEN EXIT sign anytime to review errors & remaining time.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="startMission()" class="px-8 py-4 bg-gradient-to-r from-red-600 via-amber-600 to-red-600 hover:from-red-500 hover:to-red-500 text-white font-digital font-extrabold text-lg rounded-xl shadow-xl transform active:scale-95 transition-all animate-pulse">
+                    <i class="fa-solid fa-play mr-2"></i> START DEFUSAL MISSION
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= STAGE 0: BOMB WIRE CUTTING (CB vs BRS) ================= -->
+        <div id="stage0View" class="hidden space-y-6">
+            <div class="bg-slate-900/90 border-2 border-cyan-500/40 rounded-xl p-4 sm:p-6 text-center shadow-lg relative screen-glow">
+                <div class="absolute top-2 left-3 text-[10px] font-mono-tech text-cyan-400/80">STAGE 0 TERMINAL // BOMB WIRE CUTTER (CB vs BRS)</div>
+                <!-- Dedicated Stage Instruction Banner -->
+                <div class="mt-3 mb-3 p-3 bg-cyan-950/60 border border-cyan-800/80 rounded-lg text-xs font-mono-tech text-cyan-200 text-left">
+                    <strong class="text-cyan-400 block mb-0.5"><i class="fa-solid fa-circle-info mr-1"></i> Stage 0 Instruction:</strong>
+                    When cash book is updated, determine whether adjustments should be made in Cash Book (CB) or Bank Reconciliation Statement (BRS).
+                </div>
+                <div class="text-xs text-slate-400 uppercase tracking-widest mb-1">Item to be adjusted</div>
+                <div id="s0QuestionText" class="text-lg sm:text-xl font-bold text-cyan-300 min-h-[65px] flex items-center justify-center font-mono-tech py-2 px-4 bg-black/40 rounded-lg border border-cyan-950">
+                    Loading Stage 0 Wire Task...
+                </div>
+                <div class="mt-2 text-xs text-slate-400 font-mono-tech">
+                    Action Required: Snipe the correct wire! <span class="text-blue-400 font-bold">BLUE WIRE (CB)</span> vs <span class="text-red-400 font-bold">RED WIRE (BRS)</span>
+                </div>
+            </div>
+
+            <!-- Wire Cutting Harness Area -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center relative shadow-inner">
+                <div class="w-full max-w-xl grid grid-cols-1 sm:grid-cols-2 gap-8 items-center py-4">
+                    
+                    <!-- Blue Wire (CB Adjustment) -->
+                    <button onclick="snipWire('CB')" class="group relative bg-slate-950 hover:bg-blue-950/40 border-2 border-slate-800 hover:border-blue-500/80 rounded-2xl p-6 flex flex-col items-center transition transform active:scale-95 shadow-2xl overflow-hidden">
+                        <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500 opacity-0 group-hover:opacity-100 transition"></div>
+                        <div class="w-full h-12 flex items-center justify-between mb-4 px-2 relative">
+                            <div class="w-6 h-8 bg-gradient-to-b from-slate-400 via-slate-200 to-slate-600 rounded-sm border border-slate-700 shadow-md flex items-center justify-center z-10">
+                                <div class="w-2 h-4 bg-slate-800 rounded-full"></div>
+                            </div>
+                            <div class="flex-1 h-6 mx-[-4px] bg-gradient-to-b from-blue-400 via-blue-600 to-blue-950 rounded-full shadow-[0_5px_15px_rgba(37,99,235,0.5)] border-y border-blue-300 relative flex items-center overflow-hidden">
+                                <div class="w-full h-1 bg-white/40 absolute top-1"></div>
+                                <div class="w-full h-full opacity-20 bg-[repeating-linear-gradient(45deg,#fff,#fff_8px,transparent_8px,transparent_16px)]"></div>
+                                <span class="absolute left-1/2 -translate-x-1/2 text-[10px] font-digital text-cyan-200 font-bold tracking-widest drop-shadow">CB-WIRE // 01</span>
+                            </div>
+                            <div class="w-6 h-8 bg-gradient-to-b from-slate-400 via-slate-200 to-slate-600 rounded-sm border border-slate-700 shadow-md flex items-center justify-center z-10">
+                                <div class="w-2 h-4 bg-slate-800 rounded-full"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 text-blue-400 font-digital font-bold text-lg group-hover:text-blue-300">
+                            <i class="fa-solid fa-scissors text-xl group-hover:rotate-12 transition"></i> SNIP BLUE WIRE (CB)
+                        </div>
+                        <span class="text-[11px] font-mono-tech text-slate-400 mt-1">Cash Book Adjustment</span>
+                    </button>
+
+                    <!-- Red Wire (BRS Adjustment) -->
+                    <button onclick="snipWire('BRS')" class="group relative bg-slate-950 hover:bg-red-950/40 border-2 border-slate-800 hover:border-red-500/80 rounded-2xl p-6 flex flex-col items-center transition transform active:scale-95 shadow-2xl overflow-hidden">
+                        <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-red-500 via-amber-400 to-red-500 opacity-0 group-hover:opacity-100 transition"></div>
+                        <div class="w-full h-12 flex items-center justify-between mb-4 px-2 relative">
+                            <div class="w-6 h-8 bg-gradient-to-b from-slate-400 via-slate-200 to-slate-600 rounded-sm border border-slate-700 shadow-md flex items-center justify-center z-10">
+                                <div class="w-2 h-4 bg-slate-800 rounded-full"></div>
+                            </div>
+                            <div class="flex-1 h-6 mx-[-4px] bg-gradient-to-b from-red-400 via-red-600 to-red-950 rounded-full shadow-[0_5px_15px_rgba(220,38,38,0.5)] border-y border-red-300 relative flex items-center overflow-hidden">
+                                <div class="w-full h-1 bg-white/40 absolute top-1"></div>
+                                <div class="w-full h-full opacity-20 bg-[repeating-linear-gradient(-45deg,#fff,#fff_8px,transparent_8px,transparent_16px)]"></div>
+                                <span class="absolute left-1/2 -translate-x-1/2 text-[10px] font-digital text-amber-200 font-bold tracking-widest drop-shadow">BRS-WIRE // 02</span>
+                            </div>
+                            <div class="w-6 h-8 bg-gradient-to-b from-slate-400 via-slate-200 to-slate-600 rounded-sm border border-slate-700 shadow-md flex items-center justify-center z-10">
+                                <div class="w-2 h-4 bg-slate-800 rounded-full"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 text-red-400 font-digital font-bold text-lg group-hover:text-red-300">
+                            <i class="fa-solid fa-scissors text-xl group-hover:rotate-12 transition"></i> SNIP RED WIRE (BRS)
+                        </div>
+                        <span class="text-[11px] font-mono-tech text-slate-400 mt-1">Bank Rec Statement Adjustment</span>
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= STAGE 1: CASH BOOK LEVER GAME ================= -->
+        <div id="stage1View" class="hidden space-y-6">
+            <!-- Stage 1 Question Display -->
+            <div class="bg-slate-900/90 border-2 border-emerald-500/40 rounded-xl p-4 sm:p-6 text-center shadow-lg relative screen-glow">
+                <div class="absolute top-2 left-3 text-[10px] font-mono-tech text-emerald-400/80">STAGE 1 TERMINAL // CASH BOOK LEVER</div>
+                <!-- Dedicated Stage Instruction Banner -->
+                <div class="mt-3 mb-3 p-3 bg-emerald-950/60 border border-emerald-800/80 rounded-lg text-xs font-mono-tech text-emerald-200 text-left">
+                    <strong class="text-emerald-400 block mb-0.5"><i class="fa-solid fa-circle-info mr-1"></i> Stage 1 Instruction:</strong>
+                    For the cash book adjustments, move the lever to left or right, to represent whether the cash book should be debited (left) or credited (right).
+                </div>
+                <div class="text-xs text-slate-400 uppercase tracking-widest mb-1">Cash Book Adjustment Item</div>
+                <div id="s1QuestionText" class="text-xl sm:text-2xl font-bold text-emerald-300 min-h-[65px] flex items-center justify-center font-mono-tech py-2 px-4 bg-black/40 rounded-lg border border-emerald-950">
+                    Loading Stage 1 Task...
+                </div>
+                <div class="mt-2 text-xs text-slate-400 font-mono-tech">
+                    Action Required: Move the mechanical lever to <span class="text-blue-400 font-bold">Left (Dr.)</span> or <span class="text-red-400 font-bold">Right (Cr.)</span>
+                </div>
+            </div>
+
+            <!-- Stage 1 Mechanical Red-Knob Lever Assembly -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-10 flex flex-col items-center justify-center relative shadow-inner space-y-6">
+                <div class="w-full max-w-xl flex justify-between items-center text-sm font-digital font-bold px-4">
+                    <button onclick="triggerLever1('Dr')" class="px-4 py-2 bg-blue-950 hover:bg-blue-900 text-blue-400 border border-blue-600 rounded-xl transition shadow-lg flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> LEFT SIDE (Dr.)
+                    </button>
+                    <span class="text-slate-500 font-mono-tech text-xs">SLIDE OR CLICK LEVER</span>
+                    <button onclick="triggerLever1('Cr')" class="px-4 py-2 bg-red-950 hover:bg-red-900 text-red-400 border border-red-600 rounded-xl transition shadow-lg flex items-center gap-2">
+                        RIGHT SIDE (Cr.) <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <div class="w-full max-w-xl h-16 lever-track rounded-full border-2 border-slate-700 relative flex items-center px-4">
+                    <div id="leverHandle1" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 lever-handle flex items-center justify-center">
+                        <div class="w-16 h-16 rounded-full lever-knob border-2 border-red-300 flex items-center justify-center text-white text-xs font-bold font-digital shadow-2xl">
+                            <i class="fa-solid fa-grip-lines-vertical"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-xs font-mono-tech text-slate-400">
+                    Click the buttons above or drag the red knob to select Dr. or Cr.
+                </p>
+            </div>
+        </div>
+
+        <!-- ================= STAGE 2: CASH BOOK ERRORS (1x vs 2x) ================= -->
+        <div id="stage2View" class="hidden space-y-6">
+            <!-- Stage 2 Question Display -->
+            <div class="bg-slate-900/90 border-2 border-amber-500/40 rounded-xl p-4 sm:p-6 text-center shadow-lg relative screen-glow">
+                <div class="absolute top-2 left-3 text-[10px] font-mono-tech text-amber-400/80">STAGE 2 TERMINAL // CASH BOOK ERRORS</div>
+                <!-- Dedicated Stage Instruction Banner -->
+                <div class="mt-3 mb-3 p-3 bg-amber-950/60 border border-amber-800/80 rounded-lg text-xs font-mono-tech text-amber-200 text-left">
+                    <strong class="text-amber-400 block mb-0.5"><i class="fa-solid fa-circle-info mr-1"></i> Stage 2 Instruction:</strong>
+                    Correct cash book errors using 1x press (difference) or wrong-side reversals with 2x press.
+                </div>
+                <div class="text-xs text-slate-400 uppercase tracking-widest mb-1">Cash Book Error Scenario</div>
+                <div id="s2QuestionText" class="text-lg sm:text-xl font-bold text-amber-300 min-h-[65px] flex items-center justify-center font-mono-tech py-2 px-4 bg-black/40 rounded-lg border border-amber-950">
+                    Loading Stage 2 Task...
+                </div>
+                <div class="mt-2 text-xs text-slate-300 font-mono-tech flex justify-center items-center gap-4">
+                    <span>1. Select Side: <strong class="text-blue-400">Dr.</strong> or <strong class="text-red-400">Cr.</strong></span>
+                    <span>2. Select Multiplier: <strong class="text-emerald-400">1x (Difference)</strong> or <strong class="text-purple-400">2x (Double Entry Error)</strong></span>
+                    <span>3. Press Red Knob to Execute</span>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center relative shadow-inner space-y-6">
+                <div class="w-full max-w-xl grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-center">
+                        <div class="text-xs font-mono-tech text-slate-400 mb-2">TARGET ENTRY SIDE</div>
+                        <div class="flex justify-center gap-3">
+                            <button id="s2SideDr" onclick="setS2Side('Dr')" class="flex-1 py-2 bg-blue-950 border border-blue-600 text-blue-300 font-bold rounded-lg text-sm transition">
+                                Dr. (DEBIT)
+                            </button>
+                            <button id="s2SideCr" onclick="setS2Side('Cr')" class="flex-1 py-2 bg-slate-900 border border-slate-700 text-slate-400 font-bold rounded-lg text-sm transition">
+                                Cr. (CREDIT)
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-center">
+                        <div class="text-xs font-mono-tech text-slate-400 mb-2">AMOUNT CORRECTION TYPE</div>
+                        <div class="flex justify-center gap-3">
+                            <button id="s2Press1" onclick="setS2Press(1)" class="flex-1 py-2 bg-emerald-950 border border-emerald-600 text-emerald-300 font-bold rounded-lg text-sm transition">
+                                1x (Difference / 1x)
+                            </button>
+                            <button id="s2Press2" onclick="setS2Press(2)" class="flex-1 py-2 bg-slate-900 border border-slate-700 text-slate-400 font-bold rounded-lg text-sm transition">
+                                2x (Reversal Double)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative w-full max-w-md flex flex-col items-center justify-center py-4 bg-slate-950/60 rounded-2xl border border-slate-800">
+                    <div class="text-xs font-mono-tech text-slate-400 mb-3">COMMAND CONFIRMATION KNOB</div>
+                    <button onclick="confirmS2Action()" id="s2KnobBtn" class="w-24 h-24 rounded-full lever-knob border-4 border-red-500 flex flex-col items-center justify-center text-white shadow-2xl transition transform active:scale-90">
+                        <i class="fa-solid fa-power-off text-2xl text-red-100"></i>
+                        <span class="text-[10px] font-mono-tech font-bold mt-1 text-red-200">PRESS KNOB</span>
+                    </button>
+                    <div class="mt-3 text-xs font-mono-tech text-amber-400">
+                        CURRENT SELECTION: <span id="s2StatusText" class="font-bold underline text-white">Dr. x 1</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= STAGE 3: BANK RECONCILIATION CIRCUIT WIRE GAME ================= -->
+        <div id="stage3View" class="hidden space-y-6">
+            <!-- Stage 3 Question Display -->
+            <div class="bg-slate-900/90 border-2 border-blue-500/40 rounded-xl p-4 sm:p-5 text-center shadow-lg relative screen-glow">
+                <div class="absolute top-2 left-3 text-[10px] font-mono-tech text-blue-400/80">CIRCUIT LOGIC // RECONCILIATION DIFFERENCES</div>
+                <!-- Dialogue-style Instruction Box -->
+                <div class="mt-3 mb-3 p-4 bg-blue-950/70 border-2 border-blue-600/70 rounded-xl text-sm font-mono-tech text-blue-100 text-left shadow-inner">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-full bg-blue-800 border border-blue-400 flex items-center justify-center shrink-0 text-lg">💬</div>
+                        <div>
+                            <strong class="text-blue-300 block mb-1">Stage 3 Instruction — Dojo Master:</strong>
+                            <p class="text-blue-100/90 leading-relaxed">
+                                Identify whether each reconciliation difference makes the Cash Book balance greater or smaller than the Bank Statement balance.
+                                Route <span class="text-emerald-300 font-bold">1 → 6 → 7</span> for CB &gt; BS, or <span class="text-amber-300 font-bold">3 → 4 → 9</span> for CB &lt; BS.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-xs text-slate-400 uppercase tracking-widest mb-1">Bank Reconciliation Scenario</div>
+                <div id="s3QuestionText" class="text-lg sm:text-xl font-bold text-blue-300 min-h-[50px] flex items-center justify-center font-mono-tech py-2 px-4 bg-black/40 rounded-lg border border-blue-950">
+                    Loading Stage 3 Item...
+                </div>
+            </div>
+
+            <!-- Stage 3 Circuit Wire Board with SHORTCUTS ABOVE NUMBERPAD -->
+            <div class="flex flex-col items-center gap-4">
+                
+                <!-- ROUTE SHORTCUTS PLACED DIRECTLY ABOVE NUMBERPAD -->
+                <div class="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-xl p-3 flex flex-wrap sm:flex-nowrap justify-center gap-3">
+                    <button onclick="autoConnectRoute([1,6,7])" class="flex-1 bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-600 text-left px-3 py-2 rounded-lg transition group">
+                        <div class="flex justify-between items-center text-emerald-400 font-mono-tech text-xs font-bold">
+                            <span>ROUTE 1 &rarr; 6 &rarr; 7</span>
+                            <i class="fa-solid fa-play group-hover:translate-x-0.5 transition"></i>
+                        </div>
+                        <div class="text-[10px] text-slate-300 mt-0.5">Target: <strong>CB Bal &gt; BS Bal</strong></div>
+                    </button>
+
+                    <button onclick="autoConnectRoute([3,4,9])" class="flex-1 bg-amber-950/80 hover:bg-amber-900 border border-amber-600 text-left px-3 py-2 rounded-lg transition group">
+                        <div class="flex justify-between items-center text-amber-400 font-mono-tech text-xs font-bold">
+                            <span>ROUTE 3 &rarr; 4 &rarr; 9</span>
+                            <i class="fa-solid fa-play group-hover:translate-x-0.5 transition"></i>
+                        </div>
+                        <div class="text-[10px] text-slate-300 mt-0.5">Target: <strong>CB Bal &lt; BS Bal</strong></div>
+                    </button>
+                </div>
+
+                <!-- Circuit Board Grid (1-9 Keypad with CB / BS Banners) -->
+                <div class="w-full max-w-lg circuit-bg border-4 border-slate-800 rounded-2xl p-6 relative flex flex-col items-center justify-center shadow-2xl min-h-[380px]">
+                    <svg id="wireCanvas" class="absolute inset-0 w-full h-full z-10 pointer-events-none">
+                        <defs>
+                            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                                <feGaussianBlur stdDeviation="3" result="blur" />
+                                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                            </filter>
+                        </defs>
+                    </svg>
+
+                    <div class="flex items-center justify-center gap-3 sm:gap-4 w-full relative z-20">
+                        <div class="flex flex-col items-center justify-center bg-blue-950/80 border-2 border-blue-600/80 text-blue-400 rounded-xl py-8 px-2 sm:px-3 shadow-lg h-full">
+                            <span class="font-digital text-base sm:text-lg font-bold tracking-widest [writing-mode:vertical-lr] rotate-180">CASH BOOK</span>
+                            <div class="mt-2 px-1.5 py-0.5 bg-blue-500/20 rounded border border-blue-400 text-[10px] font-mono-tech font-bold text-blue-300">CB</div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-3 sm:gap-5 w-full max-w-xs">
+                            <button onclick="handleTerminalClick(1)" id="term-1" class="terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl font-digital text-2xl text-slate-200 flex flex-col items-center justify-center relative hover:bg-slate-700">
+                                1
+                                <span class="text-[9px] font-mono-tech text-emerald-400 absolute bottom-1">IN (&gt;)</span>
+                            </button>
+                            <button onclick="handleTerminalClick(2)" id="term-2" class="terminal-btn h-16 bg-slate-800/60 border border-slate-700 rounded-xl font-digital text-2xl text-slate-500 flex items-center justify-center hover:bg-slate-700">
+                                2
+                            </button>
+                            <button onclick="handleTerminalClick(3)" id="term-3" class="terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl font-digital text-2xl text-slate-200 flex flex-col items-center justify-center relative hover:bg-slate-700">
+                                3
+                                <span class="text-[9px] font-mono-tech text-amber-400 absolute bottom-1">IN (&lt;)</span>
+                            </button>
+
+                            <button onclick="handleTerminalClick(4)" id="term-4" class="terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl font-digital text-2xl text-blue-300 flex flex-col items-center justify-center relative hover:bg-slate-700">
+                                4
+                                <span class="text-[9px] font-mono-tech text-blue-400 absolute bottom-1">HUB B</span>
+                            </button>
+                            <button onclick="handleTerminalClick(5)" id="term-5" class="terminal-btn h-16 bg-slate-800/60 border border-slate-700 rounded-xl font-digital text-2xl text-slate-500 flex items-center justify-center hover:bg-slate-700">
+                                5
+                            </button>
+                            <button onclick="handleTerminalClick(6)" id="term-6" class="terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl font-digital text-2xl text-emerald-300 flex flex-col items-center justify-center relative hover:bg-slate-700">
+                                6
+                                <span class="text-[9px] font-mono-tech text-emerald-400 absolute bottom-1">HUB A</span>
+                            </button>
+
+                            <button onclick="handleTerminalClick(7)" id="term-7" class="terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl font-digital text-2xl text-slate-200 flex flex-col items-center justify-center relative hover:bg-slate-700">
+                                7
+                                <span class="text-[9px] font-mono-tech text-emerald-400 absolute bottom-1">OUT (&gt;)</span>
+                            </button>
+                            <button onclick="handleTerminalClick(8)" id="term-8" class="terminal-btn h-16 bg-slate-800/60 border border-slate-700 rounded-xl font-digital text-2xl text-slate-500 flex items-center justify-center hover:bg-slate-700">
+                                8
+                            </button>
+                            <button onclick="handleTerminalClick(9)" id="term-9" class="terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl font-digital text-2xl text-slate-200 flex flex-col items-center justify-center relative hover:bg-slate-700">
+                                9
+                                <span class="text-[9px] font-mono-tech text-amber-400 absolute bottom-1">OUT (&lt;)</span>
+                            </button>
+                        </div>
+
+                        <div class="flex flex-col items-center justify-center bg-blue-950/80 border-2 border-blue-600/80 text-blue-400 rounded-xl py-8 px-2 sm:px-3 shadow-lg h-full">
+                            <span class="font-digital text-base sm:text-lg font-bold tracking-widest [writing-mode:vertical-lr]">BANK STMT</span>
+                            <div class="mt-2 px-1.5 py-0.5 bg-blue-500/20 rounded border border-blue-400 text-[10px] font-mono-tech font-bold text-blue-300">BS</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 font-mono-tech text-xs bg-slate-950/90 border border-slate-800 px-4 py-2 rounded-lg text-slate-300 flex items-center gap-3 relative z-20 w-full max-w-xs">
+                        <span>PATH:</span>
+                        <span id="wirePathDisplay" class="text-blue-400 font-bold tracking-widest text-sm">[ NONE ]</span>
+                        <button onclick="resetWirePath()" class="ml-auto text-[10px] text-red-400 hover:text-red-300 underline">CLEAR</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ================= STAGE 4: BANK RECONCILIATION ON UNADJUSTED CASH BOOK BALANCE ================= -->
+        <div id="stage4View" class="hidden space-y-6">
+            <!-- Stage 4 Question Display -->
+            <div class="bg-slate-900/90 border-2 border-purple-500/40 rounded-xl p-4 sm:p-5 text-center shadow-lg relative screen-glow">
+                <div class="absolute top-2 left-3 text-[10px] font-mono-tech text-purple-400/80">STAGE 4 TERMINAL // UNADJUSTED CASH BOOK BRS</div>
+                <!-- Dialogue-style Instruction Box -->
+                <div class="mt-3 mb-3 p-4 bg-purple-950/70 border-2 border-purple-600/70 rounded-xl text-sm font-mono-tech text-purple-100 text-left shadow-inner">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-full bg-purple-800 border border-purple-400 flex items-center justify-center shrink-0 text-lg">💬</div>
+                        <div>
+                            <strong class="text-purple-300 block mb-1">Stage 4 Instruction — Dojo Master:</strong>
+                            <p class="text-purple-100/90 leading-relaxed">
+                                Prepare the Bank Reconciliation Statement, starting from the <strong>unadjusted Cash Book balance</strong> to the Bank Statement balance.
+                                For each discrepancy, select the circuit to show whether the Cash Book balance is greater or smaller than the Bank Statement balance
+                                (<span class="text-emerald-300 font-bold">1-6-7: CB &gt; BS</span> · <span class="text-amber-300 font-bold">3-4-9: CB &lt; BS</span>).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-xs text-slate-400 uppercase tracking-widest mb-1">Bank Reconciliation Item (Unadjusted Cash Book Balance)</div>
+                <div id="s4QuestionText" class="text-lg sm:text-xl font-bold text-purple-300 min-h-[55px] flex items-center justify-center font-mono-tech py-2 px-4 bg-black/40 rounded-lg border border-purple-950">
+                    Loading Stage 4 Item...
+                </div>
+            </div>
+
+            <!-- Stage 4 Circuit Wire Board with SHORTCUTS ABOVE NUMBERPAD -->
+            <div class="flex flex-col items-center gap-4">
+                
+                <!-- ROUTE SHORTCUTS PLACED DIRECTLY ABOVE NUMBERPAD -->
+                <div class="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-xl p-3 flex flex-wrap sm:flex-nowrap justify-center gap-3">
+                    <button onclick="autoConnectRoute4([1,6,7])" class="flex-1 bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-600 text-left px-3 py-2 rounded-lg transition group">
+                        <div class="flex justify-between items-center text-emerald-400 font-mono-tech text-xs font-bold">
+                            <span>ROUTE 1 &rarr; 6 &rarr; 7</span>
+                            <i class="fa-solid fa-play group-hover:translate-x-0.5 transition"></i>
+                        </div>
+                        <div class="text-[10px] text-slate-300 mt-0.5">Target: <strong>CB Bal &gt; BS Bal</strong></div>
+                    </button>
+
+                    <button onclick="autoConnectRoute4([3,4,9])" class="flex-1 bg-amber-950/80 hover:bg-amber-900 border border-amber-600 text-left px-3 py-2 rounded-lg transition group">
+                        <div class="flex justify-between items-center text-amber-400 font-mono-tech text-xs font-bold">
+                            <span>ROUTE 3 &rarr; 4 &rarr; 9</span>
+                            <i class="fa-solid fa-play group-hover:translate-x-0.5 transition"></i>
+                        </div>
+                        <div class="text-[10px] text-slate-300 mt-0.5">Target: <strong>CB Bal &lt; BS Bal</strong></div>
+                    </button>
+                </div>
+
+                <!-- Circuit Board Grid (1-9 Keypad with CB / BS Banners) -->
+                <div class="w-full max-w-lg circuit-bg border-4 border-slate-800 rounded-2xl p-6 relative flex flex-col items-center justify-center shadow-2xl min-h-[380px]">
+                    <svg id="wireCanvas4" class="absolute inset-0 w-full h-full z-10 pointer-events-none">
+                        <defs>
+                            <filter id="glow4" x="-20%" y="-20%" width="140%" height="140%">
+                                <feGaussianBlur stdDeviation="3" result="blur" />
+                                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                            </filter>
+                        </defs>
+                    </svg>
+
+                    <div class="flex items-center justify-center gap-3 sm:gap-4 w-full relative z-20">
+                        <div class="flex flex-col items-center justify-center bg-blue-950/80 border-2 border-blue-600/80 text-blue-400 rounded-xl py-8 px-2 sm:px-3 shadow-lg h-full">
+                            <span class="font-digital text-base sm:text-lg font-bold tracking-widest [writing-mode:vertical-lr] rotate-180">CASH BOOK</span>
+                            <div class="mt-2 px-1.5 py-0.5 bg-blue-500/20 rounded border border-blue-400 text-[10px] font-mono-tech font-bold text-blue-300">CB</div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-3 sm:gap-5 w-full max-w-xs">
+                            <button onclick="handleTerminalClick4(1)" id="term4-1" class="terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl font-digital text-2xl text-slate-200 flex flex-col items-center justify-center relative hover:bg-slate-700">
+                                1
+                                <span class="text-[9px] font-mono-tech text-emerald-400 absolute bottom-1">IN (&gt;)</span>
+                            </button>
+                            <button onclick="handleTerminalClick4(2)" id="term4-2" class="terminal-btn h-16 bg-slate-800/60 border border-slate-700 rounded-xl font-digital text-2xl text-slate-500 flex items-center justify-center hover:bg-slate-700">
+                                2
+                            </button>
+                            <button onclick="handleTerminalClick4(3)" id="term4-3" class="terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl font-digital text-2xl text-slate-200 flex flex-col items-center justify-center relative hover:bg-slate-700">
+                                3
+                                <span class="text-[9px] font-mono-tech text-amber-400 absolute bottom-1">IN (&lt;)</span>
+                            </button>
+
+                            <button onclick="handleTerminalClick4(4)" id="term4-4" class="terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl font-digital text-2xl text-blue-300 flex flex-col items-center justify-center relative hover:bg-slate-700">
+                                4
+                                <span class="text-[9px] font-mono-tech text-blue-400 absolute bottom-1">HUB B</span>
+                            </button>
+                            <button onclick="handleTerminalClick4(5)" id="term4-5" class="terminal-btn h-16 bg-slate-800/60 border border-slate-700 rounded-xl font-digital text-2xl text-slate-500 flex items-center justify-center hover:bg-slate-700">
+                                5
+                            </button>
+                            <button onclick="handleTerminalClick4(6)" id="term4-6" class="terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl font-digital text-2xl text-emerald-300 flex flex-col items-center justify-center relative hover:bg-slate-700">
+                                6
+                                <span class="text-[9px] font-mono-tech text-emerald-400 absolute bottom-1">HUB A</span>
+                            </button>
+
+                            <button onclick="handleTerminalClick4(7)" id="term4-7" class="terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl font-digital text-2xl text-slate-200 flex flex-col items-center justify-center relative hover:bg-slate-700">
+                                7
+                                <span class="text-[9px] font-mono-tech text-emerald-400 absolute bottom-1">OUT (&gt;)</span>
+                            </button>
+                            <button onclick="handleTerminalClick4(8)" id="term4-8" class="terminal-btn h-16 bg-slate-800/60 border border-slate-700 rounded-xl font-digital text-2xl text-slate-500 flex items-center justify-center hover:bg-slate-700">
+                                8
+                            </button>
+                            <button onclick="handleTerminalClick4(9)" id="term4-9" class="terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl font-digital text-2xl text-slate-200 flex flex-col items-center justify-center relative hover:bg-slate-700">
+                                9
+                                <span class="text-[9px] font-mono-tech text-amber-400 absolute bottom-1">OUT (&lt;)</span>
+                            </button>
+                        </div>
+
+                        <div class="flex flex-col items-center justify-center bg-purple-950/80 border-2 border-purple-600/80 text-purple-400 rounded-xl py-8 px-2 sm:px-3 shadow-lg h-full">
+                            <span class="font-digital text-base sm:text-lg font-bold tracking-widest [writing-mode:vertical-lr]">BANK STMT</span>
+                            <div class="mt-2 px-1.5 py-0.5 bg-purple-500/20 rounded border border-purple-400 text-[10px] font-mono-tech font-bold text-purple-300">BS</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 font-mono-tech text-xs bg-slate-950/90 border border-slate-800 px-4 py-2 rounded-lg text-slate-300 flex items-center gap-3 relative z-20 w-full max-w-xs">
+                        <span>PATH:</span>
+                        <span id="wirePathDisplay4" class="text-purple-400 font-bold tracking-widest text-sm">[ NONE ]</span>
+                        <button onclick="resetWirePath4()" class="ml-auto text-[10px] text-red-400 hover:text-red-300 underline">CLEAR</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ================= STAGE 5: RECONCILE BANK STATEMENT ITEMS TO UNADJUSTED CASH BOOK ================= -->
+        <div id="stage5View" class="hidden space-y-6">
+            <!-- Stage 5 Question Display -->
+            <div class="bg-slate-900/90 border-2 border-fuchsia-500/40 rounded-xl p-4 sm:p-5 text-center shadow-lg relative screen-glow">
+                <div class="absolute top-2 left-3 text-[10px] font-mono-tech text-fuchsia-400/80">STAGE 5 TERMINAL // BS → UNADJUSTED CB</div>
+                <!-- Dialogue-style Instruction Box (BAFS Dojo inspired) -->
+                <div class="mt-3 mb-3 p-4 bg-fuchsia-950/70 border-2 border-fuchsia-600/70 rounded-xl text-sm font-mono-tech text-fuchsia-100 text-left shadow-inner">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-full bg-fuchsia-800 border border-fuchsia-400 flex items-center justify-center shrink-0 text-lg">💬</div>
+                        <div>
+                            <strong class="text-fuchsia-300 block mb-1">Stage 5 Instruction — Dojo Master:</strong>
+                            <p class="text-fuchsia-100/90 leading-relaxed">
+                                Prepare the Bank Reconciliation Statement, starting from the <strong>Bank Statement balance</strong> to the unadjusted Cash Book balance.
+                                For each discrepancy, select the circuit to show whether the Bank Statement balance is greater or smaller than the Cash Book balance
+                                (<span class="text-emerald-300 font-bold">1-6-7: BS &gt; CB</span> · <span class="text-amber-300 font-bold">3-4-9: BS &lt; CB</span>).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-xs text-slate-400 uppercase tracking-widest mb-1">Bank Reconciliation Item (from Bank Statement → Unadjusted Cash Book)</div>
+                <div id="s5QuestionText" class="text-lg sm:text-xl font-bold text-fuchsia-300 min-h-[55px] flex items-center justify-center font-mono-tech py-2 px-4 bg-black/40 rounded-lg border border-fuchsia-950">
+                    Loading Stage 5 Item...
+                </div>
+            </div>
+
+            <!-- Stage 5 Circuit Wire Board -->
+            <div class="flex flex-col items-center gap-4">
+                
+                <!-- ROUTE SHORTCUTS -->
+                <div class="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-xl p-3 flex flex-wrap sm:flex-nowrap justify-center gap-3">
+                    <button onclick="autoConnectRoute5([1,6,7])" class="flex-1 bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-600 text-left px-3 py-2 rounded-lg transition group">
+                        <div class="flex justify-between items-center text-emerald-400 font-mono-tech text-xs font-bold">
+                            <span>ROUTE 1 &rarr; 6 &rarr; 7</span>
+                            <i class="fa-solid fa-play group-hover:translate-x-0.5 transition"></i>
+                        </div>
+                        <div class="text-[10px] text-slate-300 mt-0.5">Target: <strong>BS Bal &gt; CB Bal</strong></div>
+                    </button>
+
+                    <button onclick="autoConnectRoute5([3,4,9])" class="flex-1 bg-amber-950/80 hover:bg-amber-900 border border-amber-600 text-left px-3 py-2 rounded-lg transition group">
+                        <div class="flex justify-between items-center text-amber-400 font-mono-tech text-xs font-bold">
+                            <span>ROUTE 3 &rarr; 4 &rarr; 9</span>
+                            <i class="fa-solid fa-play group-hover:translate-x-0.5 transition"></i>
+                        </div>
+                        <div class="text-[10px] text-slate-300 mt-0.5">Target: <strong>BS Bal &lt; CB Bal</strong></div>
+                    </button>
+                </div>
+
+                <!-- Circuit Board Grid -->
+                <div class="w-full max-w-lg circuit-bg border-4 border-slate-800 rounded-2xl p-6 relative flex flex-col items-center justify-center shadow-2xl min-h-[380px]">
+                    <svg id="wireCanvas5" class="absolute inset-0 w-full h-full z-10 pointer-events-none">
+                        <defs>
+                            <filter id="glow5" x="-20%" y="-20%" width="140%" height="140%">
+                                <feGaussianBlur stdDeviation="3" result="blur" />
+                                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                            </filter>
+                        </defs>
+                    </svg>
+
+                    <div class="flex items-center justify-center gap-3 sm:gap-4 w-full relative z-20">
+                        <!-- LEFT: BANK STATEMENT (Stage 5 starts from BS) -->
+                        <div class="flex flex-col items-center justify-center bg-fuchsia-950/80 border-2 border-fuchsia-600/80 text-fuchsia-400 rounded-xl py-8 px-2 sm:px-3 shadow-lg h-full">
+                            <span class="font-digital text-base sm:text-lg font-bold tracking-widest [writing-mode:vertical-lr] rotate-180">BANK STMT</span>
+                            <div class="mt-2 px-1.5 py-0.5 bg-fuchsia-500/20 rounded border border-fuchsia-400 text-[10px] font-mono-tech font-bold text-fuchsia-300">BS</div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-3 sm:gap-5 w-full max-w-xs">
+                            <button onclick="handleTerminalClick5(1)" id="term5-1" class="terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl font-digital text-2xl text-slate-200 flex flex-col items-center justify-center relative hover:bg-slate-700">
+                                1
+                                <span class="text-[9px] font-mono-tech text-emerald-400 absolute bottom-1">IN (&gt;)</span>
+                            </button>
+                            <button onclick="handleTerminalClick5(2)" id="term5-2" class="terminal-btn h-16 bg-slate-800/60 border border-slate-700 rounded-xl font-digital text-2xl text-slate-500 flex items-center justify-center hover:bg-slate-700">
+                                2
+                            </button>
+                            <button onclick="handleTerminalClick5(3)" id="term5-3" class="terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl font-digital text-2xl text-slate-200 flex flex-col items-center justify-center relative hover:bg-slate-700">
+                                3
+                                <span class="text-[9px] font-mono-tech text-amber-400 absolute bottom-1">IN (&lt;)</span>
+                            </button>
+
+                            <button onclick="handleTerminalClick5(4)" id="term5-4" class="terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl font-digital text-2xl text-blue-300 flex flex-col items-center justify-center relative hover:bg-slate-700">
+                                4
+                                <span class="text-[9px] font-mono-tech text-blue-400 absolute bottom-1">HUB B</span>
+                            </button>
+                            <button onclick="handleTerminalClick5(5)" id="term5-5" class="terminal-btn h-16 bg-slate-800/60 border border-slate-700 rounded-xl font-digital text-2xl text-slate-500 flex items-center justify-center hover:bg-slate-700">
+                                5
+                            </button>
+                            <button onclick="handleTerminalClick5(6)" id="term5-6" class="terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl font-digital text-2xl text-emerald-300 flex flex-col items-center justify-center relative hover:bg-slate-700">
+                                6
+                                <span class="text-[9px] font-mono-tech text-emerald-400 absolute bottom-1">HUB A</span>
+                            </button>
+
+                            <button onclick="handleTerminalClick5(7)" id="term5-7" class="terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl font-digital text-2xl text-slate-200 flex flex-col items-center justify-center relative hover:bg-slate-700">
+                                7
+                                <span class="text-[9px] font-mono-tech text-emerald-400 absolute bottom-1">OUT (&gt;)</span>
+                            </button>
+                            <button onclick="handleTerminalClick5(8)" id="term5-8" class="terminal-btn h-16 bg-slate-800/60 border border-slate-700 rounded-xl font-digital text-2xl text-slate-500 flex items-center justify-center hover:bg-slate-700">
+                                8
+                            </button>
+                            <button onclick="handleTerminalClick5(9)" id="term5-9" class="terminal-btn h-16 bg-slate-800 border-2 border-slate-600 rounded-xl font-digital text-2xl text-slate-200 flex flex-col items-center justify-center relative hover:bg-slate-700">
+                                9
+                                <span class="text-[9px] font-mono-tech text-amber-400 absolute bottom-1">OUT (&lt;)</span>
+                            </button>
+                        </div>
+
+                        <!-- RIGHT: CASH BOOK (Stage 5 ends at unadjusted CB) -->
+                        <div class="flex flex-col items-center justify-center bg-blue-950/80 border-2 border-blue-600/80 text-blue-400 rounded-xl py-8 px-2 sm:px-3 shadow-lg h-full">
+                            <span class="font-digital text-base sm:text-lg font-bold tracking-widest [writing-mode:vertical-lr]">CASH BOOK</span>
+                            <div class="mt-2 px-1.5 py-0.5 bg-blue-500/20 rounded border border-blue-400 text-[10px] font-mono-tech font-bold text-blue-300">CB</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 font-mono-tech text-xs bg-slate-950/90 border border-slate-800 px-4 py-2 rounded-lg text-slate-300 flex items-center gap-3 relative z-20 w-full max-w-xs">
+                        <span>PATH:</span>
+                        <span id="wirePathDisplay5" class="text-fuchsia-400 font-bold tracking-widest text-sm">[ NONE ]</span>
+                        <button onclick="resetWirePath5()" class="ml-auto text-[10px] text-red-400 hover:text-red-300 underline">CLEAR</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- EXPLOSION OVERLAY -->
+    <div id="explosionOverlay" class="fixed inset-0 bg-black z-[60] flex flex-col items-center justify-center hidden">
+        <div class="text-center space-y-6 animate-pulse">
+            <div class="text-8xl sm:text-9xl">💥</div>
+            <h2 class="text-4xl sm:text-6xl font-digital font-black text-red-500 drop-shadow-[0_0_20px_rgba(239,68,68,0.9)]">BOOM!</h2>
+            <p class="text-xl font-mono-tech text-red-300">Detonation timer reached zero.</p>
+            <p class="text-sm text-slate-400 font-mono-tech">The bomb has exploded. All progress lost.</p>
+            <button onclick="restartGame(); document.getElementById('explosionOverlay').classList.add('hidden');" class="mt-4 px-8 py-3 bg-red-700 hover:bg-red-600 text-white font-digital font-bold rounded-xl shadow-lg">
+                <i class="fa-solid fa-rotate-right mr-2"></i> TRY AGAIN
+            </button>
+        </div>
+    </div>
+
+    <!-- RESULTS MODAL OVERLAY -->
+    <div id="resultsModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border-2 border-emerald-500 rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
+            
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3 mb-4">
+                <div class="flex items-center gap-2 text-emerald-400 font-digital font-bold text-lg">
+                    <svg class="w-6 h-6 fill-current text-emerald-400" viewBox="0 0 24 24">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v3l-5-4 5-4v3h4v2z"/>
+                    </svg>
+                    <span>SESSION RESULTS & INCORRECT ANSWERS</span>
+                </div>
+                <button onclick="closeResultsModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Timer / Time Remaining Summary -->
+            <div id="resultsTimerSummary" class="mb-4 p-3 bg-slate-950 border border-slate-700 rounded-xl font-mono-tech text-sm flex flex-wrap justify-between gap-3">
+                <div>
+                    <span class="text-slate-400">Time Remaining:</span>
+                    <span id="resultsTimeLeft" class="text-emerald-400 font-bold ml-2">--:--</span>
+                </div>
+                <div>
+                    <span class="text-slate-400">Final Score:</span>
+                    <span id="resultsFinalScore" class="text-amber-400 font-bold ml-2">0000</span>
+                </div>
+                <div>
+                    <span class="text-slate-400">Status:</span>
+                    <span id="resultsStatus" class="text-emerald-400 font-bold ml-2">DEFUSED</span>
+                </div>
+            </div>
+
+            <!-- Incorrect Answers Scroll List -->
+            <div class="flex-1 overflow-y-auto pr-2 mb-4 space-y-3 font-mono-tech text-xs">
+                <div id="noErrorsNotice" class="text-slate-400 text-center py-8 italic">
+                    No incorrect attempts recorded yet. Keep up the good work!
+                </div>
+                <div id="errorItemsContainer" class="space-y-2"></div>
+            </div>
+
+            <!-- Footer Action Buttons -->
+            <div class="border-t border-slate-800 pt-3 flex flex-wrap justify-between items-center gap-3">
+                <button onclick="copyIncorrectAnswers()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-mono-tech text-xs font-bold flex items-center gap-2 shadow">
+                    <i class="fa-solid fa-copy"></i> COPY INCORRECT ANSWERS
+                </button>
+
+                <div class="flex items-center gap-2">
+                    <button onclick="closeResultsModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg font-mono-tech text-xs">
+                        RESUME GAME
+                    </button>
+                    <button onclick="restartGame(); closeResultsModal();" class="px-4 py-2 bg-red-900 hover:bg-red-800 text-white rounded-lg font-mono-tech text-xs font-bold">
+                        RESTART
+                    </button>
+                </div>
+            </div>
+            
+            <div id="copyToast" class="hidden absolute bottom-16 left-1/2 -translate-x-1/2 bg-emerald-600 text-white font-mono-tech text-xs px-3 py-1.5 rounded shadow-lg border border-emerald-400">
+                Copied to clipboard!
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="mt-4 text-center text-xs font-mono-tech text-slate-500">
+        BAFS Dojo &copy; Cash Book & Bank Reconciliation Bomb Defusal Simulator
+    </footer>
+
+    <!-- GAME LOGIC SCRIPT -->
+    <script>
+        // Audio Synthesizer (Web Audio API)
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+        let isAudioMuted = false;
+
+        function playSound(type) {
+            if (isAudioMuted) return;
+            try {
+                if (!audioCtx) audioCtx = new AudioCtx();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, now);
+                    gain.gain.setValueAtTime(0.05, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'snip') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.exponentialRampToValueAtTime(150, now + 0.08);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                } else if (type === 'correct') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.25);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'error') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(140, now);
+                    osc.frequency.setValueAtTime(110, now + 0.3);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'stageWin') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.setValueAtTime(554.37, now + 0.1);
+                    osc.frequency.setValueAtTime(659.25, now + 0.2);
+                    osc.frequency.setValueAtTime(880, now + 0.3);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                    osc.start(now);
+                    osc.stop(now + 0.5);
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function toggleAudioMute() {
+            isAudioMuted = !isAudioMuted;
+            const icon = document.getElementById('muteIcon');
+            icon.className = isAudioMuted ? 'fa-solid fa-volume-xmark text-red-400' : 'fa-solid fa-volume-high text-slate-300';
+        }
+
+        // FULL COMPLETE UNTRIMMED DATASETS FOR ALL STAGES
+        const stage0Data = [
+            { text: "Deposits were entered in the bank account but were not credited by the bank until start of next month.", target: "BRS" },
+            { text: "A cheque paid to a creditor remained outstanding.", target: "BRS" },
+            { text: "The company instructed the bank to transfer from the savings account to the current account.  The bank mistakenly made the transfer in reverse.", target: "BRS" },
+            { text: "Dividends credited by the bank were not recorded in the bank account.", target: "CB" },
+            { text: "A cheque was received, representing a refund from a supplier. However, it was recorded as a payment to the supplier by the bookkeeper.", target: "CB" },
+            { text: "A returned cheque (received from a trade debtor) was shown on the bank statement but not in the bank account.", target: "CB" },
+            { text: "A standing order for an insurance premium payment was recorded on the bank statement but not in the bank account.", target: "CB" },
+            { text: "A customer settled her account with a cheque of $570, after deducting a $30 cash discount. The gross amount was recorded in the bank account and the personal account. No entries were made for the discount.", target: "CB" },
+            { text: "Cheques drawn by the had not been presented to the bank.", target: "BRS" },
+            { text: "The business had recorded in the books a payment of $1,880 to Paul Lee as $2,960.", target: "CB" },
+            { text: "Bank interest charges had not been entered in the cash at bank account.", target: "CB" },
+            { text: "Rates payment by autopay had not been entered in the cash book.", target: "CB" },
+            { text: "A credit transfer from Peter Pang had not been entered in the cash book.", target: "CB" },
+            { text: "A cheque from David Ho had been returned by the bank marked 'refer to drawer' but this had not been recorded in the cash book.", target: "CB" },
+            { text: "The bank had not credited a cheque banked on 31 March 2023.", target: "BRS" },
+            { text: "The bank had wrongly charged overdraft interest.", target: "BRS" },
+            { text: "A cheque receipt from John had been wrongly recorded as a payment to John.", target: "CB" },
+            { text: "A cheque received as sales and banked had been returned and marked ‘insufficient funds’. No entry had been made in the books to record this returned cheque.", target: "CB" },
+            { text: "Jimmy Chan received a personal cheque from his friend. He mistakenly deposited it into the business bank account but no entries had been made in the books of the business.", target: "BRS" },
+            { text: "A direct debit for electricity of $900 had not yet been recorded in the books.", target: "CB" },
+            { text: "The firm was notified that after month end, an adjustment would be made by the bank in for a debit entry made in error before month end.", target: "BRS" },
+            { text: "During 2016, a term deposit of $60,000 was made and recorded in the term deposit account. The bank credited an amount of $61,200, the principal and interest, to the account of the firm when the term deposit matured on 2 January 2017, but the firm recorded the receipt on 31 December 2016. (BRS date: 31 Dec 2016)", target: "CB" }
+        ];
+
+        const stage1Data = [
+            { text: "Bank charges", target: "Cr" },
+            { text: "Dishonoured cheque (as recipient)", target: "Cr" },
+            { text: "Dishonoured cheque (as issuer)", target: "Dr" },
+            { text: "Interest income", target: "Dr" },
+            { text: "Overdraft / loan interest expenses", target: "Cr" },
+            { text: "Credit transfer / Direct credit", target: "Dr" },
+            { text: "Standing order", target: "Cr" },
+            { text: "Direct debit", target: "Cr" }
+        ];
+
+        const stage2Data = [
+            { text: "Dr. entry has been recorded on Cr. side", targetSide: "Dr", targetPress: 2 },
+            { text: "Dr. side has been overstated / overcast", targetSide: "Cr", targetPress: 1 },
+            { text: "Dr. entry has been incorrectly entered twice", targetSide: "Cr", targetPress: 1 },
+            { text: "Dr. side has been understated / undercast", targetSide: "Dr", targetPress: 1 },
+            { text: "Cr. side has been overstated / overcast", targetSide: "Dr", targetPress: 1 },
+            { text: "Cr. side has been understated / undercast", targetSide: "Cr", targetPress: 1 },
+            { text: "Cr. entry has been recorded on Dr. side", targetSide: "Cr", targetPress: 2 },
+            { text: "Cr. entry has been incorrectly entered twice", targetSide: "Dr", targetPress: 1 }
+        ];
+
+        const stage3Data = [
+            { text: "Deposits were entered in the bank account but were not credited by the bank until start of next month.", target: ">" },
+            { text: "Cheques drawn by the firm had not been presented to the bank.", target: "<" },
+            { text: "The bank had not credited a cheque banked on month end.", target: ">" }
+        ];
+
+        // Stage 4: Unadjusted BRS – mainly timing differences & bank errors (half of original pool)
+        const stage4Data = [
+            { text: "Deposits were entered in the bank account but were not credited by the bank until start of next month.", target: ">" },
+            { text: "A cheque paid to a creditor remained outstanding.", target: "<" },
+            { text: "The company instructed the bank to transfer from the savings account to the current account. The bank mistakenly made the transfer in reverse.", target: ">" },
+            { text: "Cheques drawn by the firm had not been presented to the bank.", target: "<" },
+            { text: "The bank had not credited a cheque banked on 31 March 2023.", target: ">" },
+            { text: "The bank had wrongly charged overdraft interest.", target: ">" },
+            { text: "Jimmy Chan received a personal cheque from his friend. He mistakenly deposited it into the business bank account but no entries had been made in the books of the business.", target: "<" },
+            { text: "The firm was notified that after month end, an adjustment would be made by the bank for a debit entry made in error before month end.", target: ">" },
+            { text: "During 2016, a term deposit of $60,000 was made and recorded in the term deposit account. The bank credited an amount of $61,200, the principal and interest, to the account of the firm when the term deposit matured on 2 January 2017, but the firm recorded the receipt on 31 December 2016. (month end date: 31 Dec 2016)", target: ">" },
+            { text: "A cheque was received, representing a refund from a supplier. However, it was recorded as a payment to the supplier by the bookkeeper.", target: "<" },
+            { text: "The business had recorded in the books a payment of $1,880 to Paul Lee as $2,960.", target: "<" }
+        ];
+
+        // Stage 5: Items appearing on Bank Statement that must be reconciled to the Unadjusted Cash Book
+        const stage5Data = [
+            { text: "Dividends credited by the bank were not recorded in the bank account.", target: "<" },
+            { text: "A returned cheque (received from a trade debtor) was shown on the bank statement but not in the bank account.", target: ">" },
+            { text: "A standing order for an insurance premium payment was recorded on the bank statement but not in the bank account.", target: ">" },
+            { text: "A customer settled her account with a cheque of $570, after deducting a $30 cash discount. The gross amount was recorded in the bank account and the personal account. No entries were made for the discount.", target: ">" },
+            { text: "Bank interest charges had not been entered in the cash at bank account.", target: ">" },
+            { text: "Rates payment by autopay had not been entered in the cash book.", target: ">" },
+            { text: "A credit transfer from Peter Pang had not been entered in the cash book.", target: "<" },
+            { text: "A cheque from David Ho had been returned by the bank marked 'refer to drawer' but this had not been recorded in the cash book.", target: ">" },
+            { text: "A cheque receipt from John had been wrongly recorded as a payment to John.", target: "<" },
+            { text: "A cheque received as sales and banked had been returned and marked ‘insufficient funds’. No entry had been made in the books to record this returned cheque.", target: ">" },
+            { text: "A direct debit for electricity had not yet been recorded in the books.", target: ">" }
+        ];
+
+        // GAME STATE VARIABLES
+        let currentStage = -1; // Start at Intro Page (-1)
+        let s0Idx = 0, s1Idx = 0, s2Idx = 0, s3Idx = 0, s4Idx = 0, s5Idx = 0;
+        let score = 0;
+        let totalTimeSeconds = 900; // 15 minutes
+        let timerInterval = null;
+        let gameFinished = false;
+
+        // Active randomized question queues for current session
+        let activeStage0Data = [];
+        let activeStage1Data = [];
+        let activeStage2Data = [];
+        let activeStage3Data = [];
+        let activeStage4Data = [];
+        let activeStage5Data = [];
+
+        // Fisher-Yates Array Shuffle Utility Function
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function randomizeAllStageQuestions() {
+            activeStage0Data = shuffleArray(stage0Data);
+            activeStage1Data = shuffleArray(stage1Data);
+            activeStage2Data = shuffleArray(stage2Data);
+            activeStage3Data = shuffleArray(stage3Data);
+            activeStage4Data = shuffleArray(stage4Data);
+            activeStage5Data = shuffleArray(stage5Data);
+        }
+
+        let s2SelectedSide = 'Dr';
+        let s2SelectedPress = 1;
+
+        let s3CurrentWirePath = [];
+        let s4CurrentWirePath = [];
+        let s5CurrentWirePath = [];
+
+        let incorrectAnswersLog = [];
+
+        function logError(stageName, questionText, chosenAnswer, correctAnswer) {
+            incorrectAnswersLog.push({
+                stage: stageName,
+                question: questionText,
+                userChoice: chosenAnswer,
+                correct: correctAnswer,
+                timestamp: new Date().toLocaleTimeString()
+            });
+        }
+
+        function openResultsModal(isFinished = false) {
+            playSound('click');
+            const container = document.getElementById('errorItemsContainer');
+            const notice = document.getElementById('noErrorsNotice');
+            container.innerHTML = '';
+
+            // Update timer / score summary on results page
+            const m = Math.floor(Math.max(0, totalTimeSeconds) / 60);
+            const s = Math.floor(Math.max(0, totalTimeSeconds) % 60);
+            const timeStr = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            document.getElementById('resultsTimeLeft').textContent = timeStr;
+            document.getElementById('resultsFinalScore').textContent = String(score).padStart(4, '0');
+            
+            if (isFinished || gameFinished) {
+                document.getElementById('resultsStatus').textContent = totalTimeSeconds > 0 ? "BOMB DEFUSED ✓" : "TIME EXPIRED";
+                document.getElementById('resultsStatus').className = totalTimeSeconds > 0 
+                    ? "text-emerald-400 font-bold ml-2" 
+                    : "text-red-400 font-bold ml-2";
+            } else {
+                document.getElementById('resultsStatus').textContent = "IN PROGRESS";
+                document.getElementById('resultsStatus').className = "text-amber-400 font-bold ml-2";
+            }
+
+            if (incorrectAnswersLog.length === 0) {
+                notice.classList.remove('hidden');
+            } else {
+                notice.classList.add('hidden');
+                incorrectAnswersLog.forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = "bg-slate-950 p-3 rounded-lg border border-red-900/60 space-y-1 text-slate-300";
+                    card.innerHTML = `
+                        <div class="flex justify-between text-red-400 font-bold text-[11px]">
+                            <span>[${item.stage}] Error #${index + 1}</span>
+                            <span class="text-slate-500">${item.timestamp}</span>
+                        </div>
+                        <div class="font-bold text-slate-200 text-sm">${item.question}</div>
+                        <div class="text-slate-400 flex flex-wrap gap-4 text-[11px] mt-1">
+                            <span>Your Answer: <strong class="text-red-400">${item.userChoice}</strong></span>
+                            <span>Correct Solution: <strong class="text-emerald-400">${item.correct}</strong></span>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+            document.getElementById('resultsModal').classList.remove('hidden');
+        }
+
+        function closeResultsModal() {
+            playSound('click');
+            document.getElementById('resultsModal').classList.add('hidden');
+        }
+
+        function copyIncorrectAnswers() {
+            if (incorrectAnswersLog.length === 0) {
+                alert('No incorrect answers to copy!');
+                return;
+            }
+
+            let formattedText = "BAFS DOJO BOMB DEFUSAL - INCORRECT ANSWERS REVIEW:\n\n";
+            incorrectAnswersLog.forEach((item, idx) => {
+                formattedText += `${idx + 1}. [${item.stage}] ${item.question}\n   - Your Answer: ${item.userChoice}\n   - Correct Solution: ${item.correct}\n\n`;
+            });
+
+            const textarea = document.createElement('textarea');
+            textarea.value = formattedText;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                const toast = document.getElementById('copyToast');
+                toast.classList.remove('hidden');
+                setTimeout(() => toast.classList.add('hidden'), 2000);
+            } catch (err) {
+                console.error('Copy failed', err);
+            }
+            document.body.removeChild(textarea);
+        }
+
+        function startMission() {
+            playSound('click');
+            startTimer();
+            switchStage(0);
+        }
+
+        function switchStage(stageNum) {
+            playSound('click');
+            currentStage = stageNum;
+
+            // If entering a playable stage (> -1) and timer not running, start timer
+            if (stageNum >= 0 && !timerInterval && !gameFinished) {
+                startTimer();
+            }
+
+            ['stageIntroView', 'stage0View', 'stage1View', 'stage2View', 'stage3View', 'stage4View', 'stage5View'].forEach((id, idx) => {
+                const el = document.getElementById(id);
+                if (el) el.classList.toggle('hidden', (idx - 1) !== stageNum);
+            });
+
+            ['navStageIntro', 'navStage0', 'navStage1', 'navStage2', 'navStage3', 'navStage4', 'navStage5'].forEach((id, idx) => {
+                const btn = document.getElementById(id);
+                if (btn) {
+                    if ((idx - 1) === stageNum) {
+                        btn.className = "px-2.5 py-1.5 text-xs sm:text-sm font-semibold rounded-md transition-all flex items-center gap-1.5 bg-cyan-600 text-white shadow";
+                    } else {
+                        btn.className = "px-2.5 py-1.5 text-xs sm:text-sm font-semibold rounded-md transition-all flex items-center gap-1.5 text-slate-400 hover:text-white hover:bg-slate-800";
+                    }
+                }
+            });
+
+            updateProgress();
+            if (stageNum === 0) loadStage0Question();
+            if (stageNum === 1) loadStage1Question();
+            if (stageNum === 2) loadStage2Question();
+            if (stageNum === 3) {
+                loadStage3Question();
+                setTimeout(drawWires, 50);
+            }
+            if (stageNum === 4) {
+                loadStage4Question();
+                setTimeout(drawWires4, 50);
+            }
+            if (stageNum === 5) {
+                loadStage5Question();
+                setTimeout(drawWires5, 50);
+            }
+        }
+
+        function loadStage0Question() {
+            if (s0Idx < activeStage0Data.length) {
+                document.getElementById('s0QuestionText').textContent = activeStage0Data[s0Idx].text;
+            }
+        }
+
+        function loadStage1Question() {
+            if (s1Idx < activeStage1Data.length) {
+                document.getElementById('s1QuestionText').textContent = activeStage1Data[s1Idx].text;
+            }
+            resetLeverVisual1();
+        }
+
+        function loadStage2Question() {
+            if (s2Idx < activeStage2Data.length) {
+                document.getElementById('s2QuestionText').textContent = activeStage2Data[s2Idx].text;
+            }
+        }
+
+        function loadStage3Question() {
+            if (s3Idx < activeStage3Data.length) {
+                document.getElementById('s3QuestionText').textContent = activeStage3Data[s3Idx].text;
+            }
+            resetWirePath();
+        }
+
+        function loadStage4Question() {
+            if (s4Idx < activeStage4Data.length) {
+                document.getElementById('s4QuestionText').textContent = activeStage4Data[s4Idx].text;
+            }
+            resetWirePath4();
+        }
+
+        function loadStage5Question() {
+            if (s5Idx < activeStage5Data.length) {
+                document.getElementById('s5QuestionText').textContent = activeStage5Data[s5Idx].text;
+            }
+            resetWirePath5();
+        }
+
+        function snipWire(choice) {
+            playSound('snip');
+            const currentItem = activeStage0Data[s0Idx];
+            if (choice === currentItem.target) {
+                playSound('correct');
+                addScore(50);
+                s0Idx++;
+                if (s0Idx >= activeStage0Data.length) {
+                    playSound('stageWin');
+                    setTimeout(() => switchStage(1), 500);
+                } else {
+                    loadStage0Question();
+                }
+            } else {
+                playSound('error');
+                logError('Stage 0 Wire Cut', currentItem.text, choice, currentItem.target);
+                totalTimeSeconds = Math.max(0, totalTimeSeconds - 10);
+                const consoleEl = document.getElementById('bombConsole');
+                consoleEl.classList.add('shake');
+                setTimeout(() => consoleEl.classList.remove('shake'), 500);
+            }
+            updateProgress();
+        }
+
+        function triggerLever1(side) {
+            const handle = document.getElementById('leverHandle1');
+            if (side === 'Dr') {
+                handle.style.transform = 'translate(-120%, -50%)';
+            } else {
+                handle.style.transform = 'translate(20%, -50%)';
+            }
+            setTimeout(() => checkStage1Answer(side), 300);
+        }
+
+        function resetLeverVisual1() {
+            const handle = document.getElementById('leverHandle1');
+            if (handle) handle.style.transform = 'translate(-50%, -50%)';
+        }
+
+        function checkStage1Answer(side) {
+            const currentItem = activeStage1Data[s1Idx];
+            if (side === currentItem.target) {
+                playSound('correct');
+                addScore(100);
+                s1Idx++;
+                if (s1Idx >= activeStage1Data.length) {
+                    playSound('stageWin');
+                    setTimeout(() => switchStage(2), 500);
+                } else {
+                    loadStage1Question();
+                }
+            } else {
+                playSound('error');
+                logError('Stage 1 CB Lever', currentItem.text, side, currentItem.target);
+                totalTimeSeconds = Math.max(0, totalTimeSeconds - 10);
+                const consoleEl = document.getElementById('bombConsole');
+                consoleEl.classList.add('shake');
+                setTimeout(() => consoleEl.classList.remove('shake'), 500);
+                resetLeverVisual1();
+            }
+            updateProgress();
+        }
+
+        function setS2Side(side) {
+            playSound('click');
+            s2SelectedSide = side;
+            document.getElementById('s2SideDr').className = side === 'Dr' ? 'flex-1 py-2 bg-blue-950 border border-blue-600 text-blue-300 font-bold rounded-lg text-sm transition' : 'flex-1 py-2 bg-slate-900 border border-slate-700 text-slate-400 font-bold rounded-lg text-sm transition';
+            document.getElementById('s2SideCr').className = side === 'Cr' ? 'flex-1 py-2 bg-red-950 border border-red-600 text-red-300 font-bold rounded-lg text-sm transition' : 'flex-1 py-2 bg-slate-900 border border-slate-700 text-slate-400 font-bold rounded-lg text-sm transition';
+            document.getElementById('s2StatusText').textContent = `${s2SelectedSide} x ${s2SelectedPress}`;
+        }
+
+        function setS2Press(multiplier) {
+            playSound('click');
+            s2SelectedPress = multiplier;
+            document.getElementById('s2Press1').className = multiplier === 1 ? 'flex-1 py-2 bg-emerald-950 border border-emerald-600 text-emerald-300 font-bold rounded-lg text-sm transition' : 'flex-1 py-2 bg-slate-900 border border-slate-700 text-slate-400 font-bold rounded-lg text-sm transition';
+            document.getElementById('s2Press2').className = multiplier === 2 ? 'flex-1 py-2 bg-purple-950 border border-purple-600 text-purple-300 font-bold rounded-lg text-sm transition' : 'flex-1 py-2 bg-slate-900 border border-slate-700 text-slate-400 font-bold rounded-lg text-sm transition';
+            document.getElementById('s2StatusText').textContent = `${s2SelectedSide} x ${s2SelectedPress}`;
+        }
+
+        function confirmS2Action() {
+            playSound('click');
+            const target = activeStage2Data[s2Idx];
+            if (s2SelectedSide === target.targetSide && s2SelectedPress === target.targetPress) {
+                playSound('correct');
+                addScore(150);
+                s2Idx++;
+                if (s2Idx >= activeStage2Data.length) {
+                    playSound('stageWin');
+                    setTimeout(() => switchStage(3), 500);
+                } else {
+                    loadStage2Question();
+                }
+            } else {
+                playSound('error');
+                logError('Stage 2 CB Error', target.text, `${s2SelectedSide} x ${s2SelectedPress}`, `${target.targetSide} x ${target.targetPress}`);
+                totalTimeSeconds = Math.max(0, totalTimeSeconds - 10);
+                const consoleEl = document.getElementById('bombConsole');
+                consoleEl.classList.add('shake');
+                setTimeout(() => consoleEl.classList.remove('shake'), 500);
+            }
+            updateProgress();
+        }
+
+        // STAGE 3 WIRE CIRCUIT LOGIC
+        function handleTerminalClick(num) {
+            playSound('click');
+            if (s3CurrentWirePath.includes(num)) return;
+            s3CurrentWirePath.push(num);
+            const btn = document.getElementById(`term-${num}`);
+            if (btn) btn.classList.add('selected');
+            document.getElementById('wirePathDisplay').textContent = s3CurrentWirePath.join(' -> ');
+            drawWires();
+            if (s3CurrentWirePath.length === 3) {
+                setTimeout(checkStage3Route, 300);
+            }
+        }
+
+        function autoConnectRoute(pathArray) {
+            resetWirePath();
+            pathArray.forEach(num => handleTerminalClick(num));
+        }
+
+        function resetWirePath() {
+            s3CurrentWirePath = [];
+            for (let i = 1; i <= 9; i++) {
+                const btn = document.getElementById(`term-${i}`);
+                if (btn) btn.classList.remove('selected');
+            }
+            document.getElementById('wirePathDisplay').textContent = '[ NONE ]';
+            drawWires();
+        }
+
+        function drawWires() {
+            const svg = document.getElementById('wireCanvas');
+            if (!svg) return;
+            svg.innerHTML = `
+                <defs>
+                    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="3" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                </defs>
+            `;
+
+            if (s3CurrentWirePath.length < 2) return;
+
+            const svgRect = svg.getBoundingClientRect();
+            for (let i = 0; i < s3CurrentWirePath.length - 1; i++) {
+                const btn1 = document.getElementById(`term-${s3CurrentWirePath[i]}`);
+                const btn2 = document.getElementById(`term-${s3CurrentWirePath[i+1]}`);
+                if (btn1 && btn2) {
+                    const r1 = btn1.getBoundingClientRect();
+                    const r2 = btn2.getBoundingClientRect();
+                    const x1 = r1.left + r1.width / 2 - svgRect.left;
+                    const y1 = r1.top + r1.height / 2 - svgRect.top;
+                    const x2 = r2.left + r2.width / 2 - svgRect.left;
+                    const y2 = r2.top + r2.height / 2 - svgRect.top;
+
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', x1);
+                    line.setAttribute('y1', y1);
+                    line.setAttribute('x2', x2);
+                    line.setAttribute('y2', y2);
+                    line.setAttribute('stroke', '#38bdf8');
+                    line.setAttribute('stroke-width', '4');
+                    line.setAttribute('filter', 'url(#glow)');
+                    svg.appendChild(line);
+                }
+            }
+        }
+
+        function checkStage3Route() {
+            const currentItem = activeStage3Data[s3Idx];
+            const routeStr = s3CurrentWirePath.join('-');
+            
+            let isCorrect = false;
+            if (currentItem.target === '>' && routeStr === '1-6-7') isCorrect = true;
+            if (currentItem.target === '<' && routeStr === '3-4-9') isCorrect = true;
+
+            if (isCorrect) {
+                playSound('correct');
+                addScore(200);
+                s3Idx++;
+                if (s3Idx >= activeStage3Data.length) {
+                    playSound('stageWin');
+                    setTimeout(() => switchStage(4), 500);
+                } else {
+                    loadStage3Question();
+                }
+            } else {
+                playSound('error');
+                logError('Stage 3 Bank Rec', currentItem.text, routeStr, currentItem.target === '>' ? '1-6-7 (CB > BS)' : '3-4-9 (CB < BS)');
+                totalTimeSeconds = Math.max(0, totalTimeSeconds - 10);
+                const consoleEl = document.getElementById('bombConsole');
+                consoleEl.classList.add('shake');
+                setTimeout(() => consoleEl.classList.remove('shake'), 500);
+                resetWirePath();
+            }
+            updateProgress();
+        }
+
+        // STAGE 4 WIRE CIRCUIT LOGIC
+        function handleTerminalClick4(num) {
+            playSound('click');
+            if (s4CurrentWirePath.includes(num)) return;
+            s4CurrentWirePath.push(num);
+            const btn = document.getElementById(`term4-${num}`);
+            if (btn) btn.classList.add('selected');
+            document.getElementById('wirePathDisplay4').textContent = s4CurrentWirePath.join(' -> ');
+            drawWires4();
+            if (s4CurrentWirePath.length === 3) {
+                setTimeout(checkStage4Route, 300);
+            }
+        }
+
+        function autoConnectRoute4(pathArray) {
+            resetWirePath4();
+            pathArray.forEach(num => handleTerminalClick4(num));
+        }
+
+        function resetWirePath4() {
+            s4CurrentWirePath = [];
+            for (let i = 1; i <= 9; i++) {
+                const btn = document.getElementById(`term4-${i}`);
+                if (btn) btn.classList.remove('selected');
+            }
+            document.getElementById('wirePathDisplay4').textContent = '[ NONE ]';
+            drawWires4();
+        }
+
+        function drawWires4() {
+            const svg = document.getElementById('wireCanvas4');
+            if (!svg) return;
+            svg.innerHTML = `
+                <defs>
+                    <filter id="glow4" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="3" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                </defs>
+            `;
+
+            if (s4CurrentWirePath.length < 2) return;
+
+            const svgRect = svg.getBoundingClientRect();
+            for (let i = 0; i < s4CurrentWirePath.length - 1; i++) {
+                const btn1 = document.getElementById(`term4-${s4CurrentWirePath[i]}`);
+                const btn2 = document.getElementById(`term4-${s4CurrentWirePath[i+1]}`);
+                if (btn1 && btn2) {
+                    const r1 = btn1.getBoundingClientRect();
+                    const r2 = btn2.getBoundingClientRect();
+                    const x1 = r1.left + r1.width / 2 - svgRect.left;
+                    const y1 = r1.top + r1.height / 2 - svgRect.top;
+                    const x2 = r2.left + r2.width / 2 - svgRect.left;
+                    const y2 = r2.top + r2.height / 2 - svgRect.top;
+
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', x1);
+                    line.setAttribute('y1', y1);
+                    line.setAttribute('x2', x2);
+                    line.setAttribute('y2', y2);
+                    line.setAttribute('stroke', '#a855f7');
+                    line.setAttribute('stroke-width', '4');
+                    line.setAttribute('filter', 'url(#glow4)');
+                    svg.appendChild(line);
+                }
+            }
+        }
+
+        function checkStage4Route() {
+            const currentItem = activeStage4Data[s4Idx];
+            const routeStr = s4CurrentWirePath.join('-');
+            
+            let isCorrect = false;
+            if (currentItem.target === '>' && routeStr === '1-6-7') isCorrect = true;
+            if (currentItem.target === '<' && routeStr === '3-4-9') isCorrect = true;
+
+            if (isCorrect) {
+                playSound('correct');
+                addScore(250);
+                s4Idx++;
+                if (s4Idx >= activeStage4Data.length) {
+                    playSound('stageWin');
+                    setTimeout(() => switchStage(5), 500);
+                } else {
+                    loadStage4Question();
+                }
+            } else {
+                playSound('error');
+                logError('Stage 4 Unadjusted BRS', currentItem.text, routeStr, currentItem.target === '>' ? '1-6-7 (CB > BS)' : '3-4-9 (CB < BS)');
+                totalTimeSeconds = Math.max(0, totalTimeSeconds - 10);
+                const consoleEl = document.getElementById('bombConsole');
+                consoleEl.classList.add('shake');
+                setTimeout(() => consoleEl.classList.remove('shake'), 500);
+                resetWirePath4();
+            }
+            updateProgress();
+        }
+
+        // ================= STAGE 5 CIRCUIT FUNCTIONS =================
+        function handleTerminalClick5(num) {
+            playSound('click');
+            if (s5CurrentWirePath.includes(num)) return;
+            s5CurrentWirePath.push(num);
+            const btn = document.getElementById(`term5-${num}`);
+            if (btn) btn.classList.add('selected');
+            document.getElementById('wirePathDisplay5').textContent = s5CurrentWirePath.join(' -> ');
+            drawWires5();
+            if (s5CurrentWirePath.length === 3) {
+                setTimeout(checkStage5Route, 300);
+            }
+        }
+
+        function autoConnectRoute5(pathArray) {
+            resetWirePath5();
+            pathArray.forEach(num => handleTerminalClick5(num));
+        }
+
+        function resetWirePath5() {
+            s5CurrentWirePath = [];
+            for (let i = 1; i <= 9; i++) {
+                const btn = document.getElementById(`term5-${i}`);
+                if (btn) btn.classList.remove('selected');
+            }
+            document.getElementById('wirePathDisplay5').textContent = '[ NONE ]';
+            drawWires5();
+        }
+
+        function drawWires5() {
+            const svg = document.getElementById('wireCanvas5');
+            if (!svg) return;
+            svg.innerHTML = `
+                <defs>
+                    <filter id="glow5" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="3" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                </defs>
+            `;
+
+            if (s5CurrentWirePath.length < 2) return;
+
+            const svgRect = svg.getBoundingClientRect();
+            for (let i = 0; i < s5CurrentWirePath.length - 1; i++) {
+                const btn1 = document.getElementById(`term5-${s5CurrentWirePath[i]}`);
+                const btn2 = document.getElementById(`term5-${s5CurrentWirePath[i+1]}`);
+                if (btn1 && btn2) {
+                    const r1 = btn1.getBoundingClientRect();
+                    const r2 = btn2.getBoundingClientRect();
+                    const x1 = r1.left + r1.width / 2 - svgRect.left;
+                    const y1 = r1.top + r1.height / 2 - svgRect.top;
+                    const x2 = r2.left + r2.width / 2 - svgRect.left;
+                    const y2 = r2.top + r2.height / 2 - svgRect.top;
+
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', x1);
+                    line.setAttribute('y1', y1);
+                    line.setAttribute('x2', x2);
+                    line.setAttribute('y2', y2);
+                    line.setAttribute('stroke', '#e879f9');
+                    line.setAttribute('stroke-width', '4');
+                    line.setAttribute('filter', 'url(#glow5)');
+                    svg.appendChild(line);
+                }
+            }
+        }
+
+        function checkStage5Route() {
+            const currentItem = activeStage5Data[s5Idx];
+            const routeStr = s5CurrentWirePath.join('-');
+            
+            // Stage 5 routes are defined from BS perspective:
+            // 1-6-7 = BS > CB  (equivalent to original CB < BS → target '<')
+            // 3-4-9 = BS < CB  (equivalent to original CB > BS → target '>')
+            let isCorrect = false;
+            if (currentItem.target === '<' && routeStr === '1-6-7') isCorrect = true; // BS > CB
+            if (currentItem.target === '>' && routeStr === '3-4-9') isCorrect = true; // BS < CB
+
+            if (isCorrect) {
+                playSound('correct');
+                addScore(300);
+                s5Idx++;
+                if (s5Idx >= activeStage5Data.length) {
+                    playSound('stageWin');
+                    gameFinished = true;
+                    if (timerInterval) {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                    }
+                    setTimeout(() => openResultsModal(true), 600);
+                } else {
+                    loadStage5Question();
+                }
+            } else {
+                playSound('error');
+                const correctRoute = currentItem.target === '<' ? '1-6-7 (BS > CB)' : '3-4-9 (BS < CB)';
+                logError('Stage 5 BS→Unadj CB', currentItem.text, routeStr, correctRoute);
+                totalTimeSeconds = Math.max(0, totalTimeSeconds - 10);
+                const consoleEl = document.getElementById('bombConsole');
+                consoleEl.classList.add('shake');
+                setTimeout(() => consoleEl.classList.remove('shake'), 500);
+                resetWirePath5();
+            }
+            updateProgress();
+        }
+
+        function addScore(pts) {
+            score += pts;
+            document.getElementById('scoreDisplay').textContent = String(score).padStart(4, '0');
+        }
+
+        function updateProgress() {
+            let totalItems = 0, currentProgress = 0, titleText = "STAGE PROGRESS";
+            if (currentStage === 0) {
+                totalItems = activeStage0Data.length;
+                currentProgress = s0Idx;
+                titleText = "STAGE 0: WIRE CUTTING";
+            } else if (currentStage === 1) {
+                totalItems = activeStage1Data.length;
+                currentProgress = s1Idx;
+                titleText = "STAGE 1: CASH BOOK LEVER";
+            } else if (currentStage === 2) {
+                totalItems = activeStage2Data.length;
+                currentProgress = s2Idx;
+                titleText = "STAGE 2: ERROR CORRECTION";
+            } else if (currentStage === 3) {
+                totalItems = activeStage3Data.length;
+                currentProgress = s3Idx;
+                titleText = "STAGE 3: BRS CIRCUITS";
+            } else if (currentStage === 4) {
+                totalItems = activeStage4Data.length;
+                currentProgress = s4Idx;
+                titleText = "STAGE 4: UNADJUSTED BRS";
+            } else if (currentStage === 5) {
+                totalItems = activeStage5Data.length;
+                currentProgress = s5Idx;
+                titleText = "STAGE 5: BS → UNADJ CB";
+            } else {
+                titleText = "START PAGE";
+                totalItems = 1;
+                currentProgress = 0;
+            }
+
+            document.getElementById('stageTitleProgress').textContent = titleText;
+            document.getElementById('progressText').textContent = `${currentProgress} / ${totalItems}`;
+            const pct = Math.round((currentProgress / Math.max(totalItems, 1)) * 100);
+            document.getElementById('progressBar').style.width = `${pct}%`;
+        }
+
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (totalTimeSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    document.getElementById('timerDisplay').textContent = "00:00.00";
+                    playSound('error');
+                    // Show explosion overlay
+                    document.getElementById('explosionOverlay').classList.remove('hidden');
+                    gameFinished = true;
+                    return;
+                }
+                totalTimeSeconds -= 0.1;
+                const m = Math.floor(totalTimeSeconds / 60);
+                const s = Math.floor(totalTimeSeconds % 60);
+                const ms = Math.floor((totalTimeSeconds % 1) * 100);
+                document.getElementById('timerDisplay').textContent = 
+                    `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.${String(ms).padStart(2, '0')}`;
+            }, 100);
+        }
+
+        function restartGame() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            s0Idx = 0; s1Idx = 0; s2Idx = 0; s3Idx = 0; s4Idx = 0; s5Idx = 0;
+            score = 0;
+            totalTimeSeconds = 900;
+            gameFinished = false;
+            document.getElementById('timerDisplay').textContent = "15:00.00";
+            document.getElementById('explosionOverlay').classList.add('hidden');
+            incorrectAnswersLog = [];
+            randomizeAllStageQuestions();
+            document.getElementById('scoreDisplay').textContent = '0000';
+            switchStage(-1);
+        }
+
+        window.onload = function() {
+            randomizeAllStageQuestions();
+            document.getElementById('timerDisplay').textContent = "15:00.00";
+            window.addEventListener('resize', () => {
+                if (currentStage === 3) drawWires();
+                if (currentStage === 4) drawWires4();
+                if (currentStage === 5) drawWires5();
+            });
+        };
+    </script>
+</body>
+</html>
